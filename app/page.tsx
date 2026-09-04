@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { Download, Plus, CheckCircle2, AlertCircle, Clock, Cpu, Network, CheckSquare, ListTodo, Activity, Box, Search, ArrowUpRight } from 'lucide-react'
 import { headers } from 'next/headers'
 import { InventoryDashboardClient } from '@/components/dashboard/InventoryDashboardClient'
-import { RecentRequisitionsWidget } from '@/components/dashboard/RecentRequisitionsWidget'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -63,6 +62,14 @@ export default async function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      {/* Interactive Semiconductor Multi-Material & Fab Inventory Hub (Top) */}
+      <InventoryDashboardClient
+        inventory={inventory}
+        materials={materials}
+        plants={plants}
+        recentPos={recentPos}
+      />
 
       {/* Agentic Orchestration State */}
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
@@ -134,18 +141,6 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
-
-      {/* Live Recent Requisition Activity Widget */}
-      <RecentRequisitionsWidget initialPrs={prs} />
-
-      {/* Interactive Semiconductor Multi-Material & Fab Inventory Hub */}
-      <InventoryDashboardClient
-        inventory={inventory}
-        materials={materials}
-        plants={plants}
-        recentPos={recentPos}
-      />
-
     </div>
   )
 }
