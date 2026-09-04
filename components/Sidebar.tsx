@@ -31,7 +31,7 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
 
   return (
     <aside 
-      className={`bg-slate-900 text-slate-300 flex flex-col h-screen fixed left-0 top-0 border-r border-slate-800 z-30 transition-all duration-300 ease-in-out ${
+      className={`bg-slate-900 text-slate-300 flex flex-col h-screen sticky top-0 border-r border-slate-800 z-30 shrink-0 transition-all duration-300 ease-in-out ${
         collapsed ? 'w-16' : 'w-64'
       }`}
     >
