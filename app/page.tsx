@@ -2,6 +2,10 @@ import Link from 'next/link'
 import { Download, Plus, CheckCircle2, AlertCircle, Clock, ShieldAlert, Cpu, Network, CheckSquare, ListTodo, Activity, ShieldCheck, Box, PackageOpen, Package, Search, FileText, ArrowUpRight } from 'lucide-react'
 import { headers } from 'next/headers'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
+
 async function getDashboardData() {
   const host = headers().get('host') || 'localhost:3000'
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'

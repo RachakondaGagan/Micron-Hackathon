@@ -10,7 +10,20 @@ export function createServerClient() {
     throw new Error('Missing Supabase server environment variables')
   }
 
-  return createClient(url, key)
+  return createClient(url, key, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+    global: {
+      fetch: (input, init) => {
+        return fetch(input, {
+          ...init,
+          cache: 'no-store',
+        })
+      },
+    },
+  })
 }
 
 // Browser-side client — uses ANON_KEY (subject to RLS)
