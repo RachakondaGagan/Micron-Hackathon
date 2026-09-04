@@ -129,6 +129,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       data: {
+        deploy_version: 'v-micron-100',
         materials,
         plants,
         inventory,
