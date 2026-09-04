@@ -8,7 +8,8 @@ import {
   Package, 
   Activity, 
   Plus, 
-  Hexagon 
+  Hexagon,
+  ListTodo
 } from 'lucide-react'
 
 type SidebarProps = {
@@ -21,8 +22,9 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
 
   const navItems = [
     { href: '/', label: 'Requestor Dashboard', icon: LayoutDashboard },
+    { href: '/pr', label: 'My Requisitions', icon: ListTodo },
     { href: '/pr/new', label: 'Create Requisition', icon: Plus },
-    { href: '/pr/latest', label: 'PR Pipeline Trace', icon: Activity },
+    { href: '/pipeline', label: 'PR Pipeline Trace', icon: Activity },
     { href: '/notifications', label: 'Review Queue', icon: FileText, badge: 'Live' },
     { href: '/#inventory-health', label: 'Inventory Health', icon: Package },
   ]

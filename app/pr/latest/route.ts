@@ -14,10 +14,10 @@ export async function GET(request: Request) {
       .maybeSingle()
 
     if (pr?.pr_id) {
-      return NextResponse.redirect(new URL(`/pr/${pr.pr_id}`, request.url))
+      return NextResponse.redirect(new URL(`/pipeline?prId=${pr.pr_id}`, request.url))
     }
 
-    return NextResponse.redirect(new URL('/pr/new', request.url))
+    return NextResponse.redirect(new URL('/pipeline', request.url))
   } catch (err) {
     return NextResponse.redirect(new URL('/', request.url))
   }

@@ -3,6 +3,10 @@ import { createServerClient } from '@/lib/supabase'
 import { CreatePRSchema } from '@/lib/validation/pr-validation'
 import { runPRPipeline } from '@/lib/agents/orchestrator'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
+
 export async function GET(request: Request) {
   try {
     const supabase = createServerClient()
