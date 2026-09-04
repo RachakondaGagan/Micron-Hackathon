@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
 import { CreatePRSchema } from '@/lib/validation/pr-validation'
 import { runPRPipeline } from '@/lib/agents/orchestrator'
+import { sendPRCreatedEmail } from '@/lib/notifications/resend'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -100,12 +101,12 @@ export async function POST(request: Request) {
     const { material_id, plant_id, quantity, required_date, requestor_name, requestor_email, planner_name, planner_email } = result.data
 
     // 2. Validate Material & Plant exist
-    const { data: material } = await supabase.from('material_master').select('material_id').eq('material_id', material_id).single()
+    const { data: material } = await supabase.from('material_master').select('material_id, material_name').eq('material_id', material_id).single()
     if (!material) {
       return NextResponse.json({ data: null, error: { code: 'INVALID_MATERIAL', message: 'Material not found or inactive' } }, { status: 400 })
     }
 
-    const { data: plant } = await supabase.from('plant_master').select('plant_id').eq('plant_id', plant_id).single()
+    const { data: plant } = await supabase.from('plant_master').select('plant_id, plant_name').eq('plant_id', plant_id).single()
     if (!plant) {
       return NextResponse.json({ data: null, error: { code: 'INVALID_PLANT', message: 'Plant not found or inactive' } }, { status: 400 })
     }
@@ -156,7 +157,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ data: null, error: { code: 'DB_ERROR', message: 'Failed to create PR' } }, { status: 500 })
     }
 
-    // 4. Trigger the AI Pipeline asynchronously in background
+    // 4. Send Real-Time Requisition Created Email to Requestor
+    sendPRCreatedEmail({
+      recipientEmail: requestor_email,
+      recipientName: requestor_name,
+      prNumber: newPR.pr_number,
+      materialName: material?.material_name || material_id,
+      plantName: plant?.plant_name || plant_id,
+      quantity,
+      requiredDate: required_date,
+    }).catch((emailErr) => {
+      console.warn(`PR Created email dispatch failed for ${newPR.pr_number}:`, emailErr)
+    })
+
+    // 5. Trigger the AI Pipeline asynchronously in background
     runPRPipeline(newPR.pr_id).catch((pipeErr) => {
       console.error(`Background pipeline execution failed for PR ${newPR.pr_id}:`, pipeErr)
     })

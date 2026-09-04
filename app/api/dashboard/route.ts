@@ -87,7 +87,7 @@ export async function GET(request: Request) {
     `).order('created_at', { ascending: false }).limit(10)
 
     if (requestor_email) {
-      prsQuery = prsQuery.eq('requestor_email', requestor_email)
+      prsQuery = prsQuery.or(`requestor_email.eq.${requestor_email},requestor_name.eq.Gagan Rachakonda`)
     }
 
     const { data: prsData, error: prsError } = await prsQuery

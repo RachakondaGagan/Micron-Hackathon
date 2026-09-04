@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
 import { createPurchaseOrder } from '@/lib/orders/po'
+import { sendPRApprovedEmail, sendPRRejectedEmail } from '@/lib/notifications/resend'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -99,6 +100,17 @@ export async function POST(request: Request) {
         status: 'READ',
       })
 
+      // Send Real-Time Email to Requestor
+      sendPRApprovedEmail({
+        recipientEmail: pr.requestor_email,
+        recipientName: pr.requestor_name,
+        prNumber: pr.pr_number,
+        poNumber: createdPo?.po_number,
+        notes,
+      }).catch((emailErr) => {
+        console.warn('Real-time approval email dispatch failed:', emailErr)
+      })
+
       return NextResponse.json({
         data: {
           pr_id,
@@ -139,6 +151,16 @@ export async function POST(request: Request) {
         channel: 'IN_APP',
         message: `Review completed: PR ${pr.pr_number} rejected. Reason: ${rejectionReason}`,
         status: 'READ',
+      })
+
+      // Send Real-Time Email to Requestor
+      sendPRRejectedEmail({
+        recipientEmail: pr.requestor_email,
+        recipientName: pr.requestor_name,
+        prNumber: pr.pr_number,
+        reason: rejectionReason,
+      }).catch((emailErr) => {
+        console.warn('Real-time rejection email dispatch failed:', emailErr)
       })
 
       return NextResponse.json({
