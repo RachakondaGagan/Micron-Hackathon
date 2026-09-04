@@ -196,12 +196,15 @@ export default function PRDetailPage() {
         decisionReason={analysis?.decision_reason}
         riskLevel={analysis?.risk_level}
         keyEvidence={analysis?.duplicate_result?.evidence}
+        hasPO={!!po}
         recommendedNextStep={
           analysis?.decision === 'APPROVE'
-            ? 'Purchase order auto-generated and sent for ERP fulfillment.'
+            ? po
+              ? 'Purchase order auto-generated and sent for ERP fulfillment.'
+              : 'Fulfilled from on-hand warehouse inventory. External supplier purchase order bypassed (0 POs required).'
             : analysis?.decision === 'REVIEW'
             ? 'Requisition dispatched to assigned Planner for manual verification.'
-            : 'Requisition blocked to prevent duplicate double-spend.'
+            : 'Requisition blocked to prevent duplicate double-spend or unauthorized procurement.'
         }
       />
 

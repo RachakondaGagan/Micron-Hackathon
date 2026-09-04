@@ -10,6 +10,7 @@ interface DecisionBannerProps {
   riskLevel?: RiskLevelType | null
   keyEvidence?: string[]
   recommendedNextStep?: string | null
+  hasPO?: boolean
 }
 
 export function DecisionBanner({
@@ -18,6 +19,7 @@ export function DecisionBanner({
   riskLevel = 'LOW',
   keyEvidence = [],
   recommendedNextStep,
+  hasPO = false,
 }: DecisionBannerProps) {
   if (!decision) {
     return (
@@ -35,10 +37,13 @@ export function DecisionBanner({
     switch (decision) {
       case 'APPROVE':
         return {
-          title: 'Autonomous Approval Granted',
-          subtitle: 'Requisition adheres to all company procurement policies and financial bounds.',
+          title: hasPO ? 'Autonomous PO Approval Granted' : 'Approved — Fulfilled From Warehouse Stock',
+          subtitle: hasPO
+            ? 'Requisition approved and supplier purchase order generated for procurement.'
+            : 'Internal inventory is sufficient. External vendor purchase bypassed — 0 purchase orders required.',
           bg: 'bg-emerald-500/10 border-emerald-300/80',
           badgeBg: 'bg-emerald-600 text-white',
+          badgeText: hasPO ? 'APPROVE (PO DISPATCHED)' : 'APPROVE (INTERNAL FULFILLMENT)',
           textHead: 'text-emerald-950',
           textSub: 'text-emerald-800',
           icon: ShieldCheck,
@@ -96,7 +101,7 @@ export function DecisionBanner({
           <div>
             <div className="flex items-center gap-2.5">
               <span className={`text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider ${theme.badgeBg}`}>
-                {decision}
+                {(theme as any).badgeText || decision}
               </span>
               <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${getRiskBadge()}`}>
                 Risk: {riskLevel || 'LOW'}
