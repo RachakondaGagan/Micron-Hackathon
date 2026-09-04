@@ -12,7 +12,7 @@ import { computePreliminaryDecision } from '@/lib/scoring/agent3-decision'
 import { getGroqClient, GROQ_MODEL, GROQ_TEMPERATURE, GROQ_MAX_TOKENS } from '@/lib/groq'
 import { AGENT3_SYSTEM_PROMPT, buildAgent3UserPrompt } from '@/lib/agents/prompts'
 import { DecisionResultSchema } from '@/lib/validation/agent-output-validation'
-import { createPurchaseOrder } from '@/app/api/po/route'
+import { createPurchaseOrder } from '@/lib/orders/po'
 
 export async function runAgent3(
   pr: PurchaseRequisition,

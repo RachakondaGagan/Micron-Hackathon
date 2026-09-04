@@ -89,11 +89,14 @@ export async function runAgent4(
   // Update notification status if record was created
   if (in_app_created) {
     const newStatus = emailResult.sent ? 'SENT' : emailResult.error ? 'EMAIL_FAILED' : 'SENT'
-    await supabase
-      .from('notifications')
-      .update({ status: newStatus })
-      .eq('notification_id', notification_id)
-      .catch((e: any) => console.warn('Failed to update notification status:', e))
+    try {
+      await supabase
+        .from('notifications')
+        .update({ status: newStatus })
+        .eq('notification_id', notification_id)
+    } catch (e: any) {
+      console.warn('Failed to update notification status:', e)
+    }
   }
 
   return {

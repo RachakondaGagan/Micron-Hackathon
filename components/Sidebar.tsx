@@ -22,9 +22,9 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   const navItems = [
     { href: '/', label: 'Requestor Dashboard', icon: LayoutDashboard },
     { href: '/pr/new', label: 'Create Requisition', icon: Plus },
-    { href: '#', label: 'PR Pipeline Trace', icon: Activity },
-    { href: '#', label: 'Review Queue', icon: FileText, badge: '5' },
-    { href: '#', label: 'Inventory Health', icon: Package },
+    { href: '/pr/latest', label: 'PR Pipeline Trace', icon: Activity },
+    { href: '/notifications', label: 'Review Queue & Audit', icon: FileText, badge: 'Live' },
+    { href: '/', label: 'Inventory Health', icon: Package },
   ]
 
   return (

@@ -107,20 +107,33 @@ export async function POST(request: Request) {
     }
 
     // Check mapping
-    const { data: mapping } = await supabase.from('plant_material_mapping')
-      .select('mapping_id')
+    const { data: mapping, error: mappingError } = await supabase
+      .from('plant_material_mapping')
+      .select('plant_id, material_id')
       .eq('material_id', material_id)
       .eq('plant_id', plant_id)
-      .single()
+      .eq('is_active', true)
+      .maybeSingle()
     
-    if (!mapping) {
+    if (mappingError || !mapping) {
       return NextResponse.json({ data: null, error: { code: 'INVALID_MAPPING', message: 'Material is not mapped to this plant' } }, { status: 400 })
     }
 
-    // 3. Insert PR (Trigger generate_pr_number() will run automatically on insert due to DB trigger)
+    // 3. Generate sequential PR number via database RPC
+    let prNumber = `PR-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`
+    try {
+      const { data: generatedPRNum, error: rpcError } = await supabase.rpc('generate_pr_number')
+      if (!rpcError && generatedPRNum) {
+        prNumber = generatedPRNum
+      }
+    } catch (err) {
+      console.warn('RPC generate_pr_number failed, using fallback format:', err)
+    }
+
     const { data: newPR, error: insertError } = await supabase
       .from('purchase_requisitions')
       .insert({
+        pr_number: prNumber,
         material_id,
         plant_id,
         quantity,

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Download, Plus, CheckCircle2, AlertCircle, Clock, ShieldAlert, Cpu, Network, CheckSquare, ListTodo, Activity, ShieldCheck, Box, PackageOpen, Search, FileText } from 'lucide-react'
+import { Download, Plus, CheckCircle2, AlertCircle, Clock, ShieldAlert, Cpu, Network, CheckSquare, ListTodo, Activity, ShieldCheck, Box, PackageOpen, Search, FileText, ArrowUpRight } from 'lucide-react'
 import { headers } from 'next/headers'
 
 async function getDashboardData() {
@@ -62,7 +62,7 @@ export default async function DashboardPage() {
 
       {/* Agentic Orchestration State */}
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           <div className="flex items-center gap-2">
             <div className="bg-purple-100 p-1.5 rounded-md">
               <Cpu className="w-5 h-5 text-purple-600" />
@@ -72,8 +72,15 @@ export default async function DashboardPage() {
               Multi-Table DB Connected (10 Tables)
             </span>
           </div>
-          <div className="text-xs text-slate-500">
-            Autonomous Pipeline Latency: 420ms
+          <div className="flex items-center gap-3">
+            <Link
+              href="/pr/latest"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-3 py-1.5 rounded-lg transition-colors shadow-2xs"
+            >
+              <Activity className="w-3.5 h-3.5 text-purple-600" />
+              <span>View Latest Pipeline Trace</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
         
@@ -234,44 +241,62 @@ export default async function DashboardPage() {
             <tbody className="divide-y divide-slate-100">
               {prs.map((pr: any) => (
                 <tr key={pr.pr_id} className="hover:bg-slate-50 transition-colors group">
-                  <td className="px-6 py-4 font-medium text-blue-600 flex items-center gap-2">
-                    {pr.status === 'APPROVED' && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
-                    {pr.status === 'UNDER_REVIEW' && <Clock className="w-4 h-4 text-purple-500" />}
-                    {pr.status === 'REJECTED' && <AlertCircle className="w-4 h-4 text-red-500" />}
-                    {pr.status === 'CREATED' && <ListTodo className="w-4 h-4 text-slate-400" />}
-                    {pr.pr_number}
+                  <td className="px-6 py-4 font-medium">
+                    <Link
+                      href={`/pr/${pr.pr_id}`}
+                      className="inline-flex items-center gap-2 font-bold text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      {pr.status === 'APPROVED' && <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />}
+                      {pr.status === 'PO_CREATED' && <CheckCircle2 className="w-4 h-4 text-indigo-500 shrink-0" />}
+                      {pr.status === 'UNDER_REVIEW' && <Clock className="w-4 h-4 text-purple-500 shrink-0" />}
+                      {pr.status === 'REJECTED' && <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />}
+                      {pr.status === 'CREATED' && <ListTodo className="w-4 h-4 text-slate-400 shrink-0" />}
+                      <span>{pr.pr_number}</span>
+                    </Link>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="font-medium text-slate-900">{pr.material_name}</div>
-                    <div className="text-xs text-slate-500">SKU: {pr.material_name.toUpperCase().replace(/\s/g, '-')}-01</div>
+                    <Link href={`/pr/${pr.pr_id}`} className="block group/link">
+                      <div className="font-semibold text-slate-900 group-hover/link:text-blue-600 transition-colors">
+                        {pr.material_name}
+                      </div>
+                      <div className="text-xs text-slate-400 font-mono mt-0.5">
+                        {pr.material_id || 'SKU'}
+                      </div>
+                    </Link>
                   </td>
                   <td className="px-6 py-4 text-slate-600 flex items-center gap-2">
-                    <Box className="w-4 h-4 text-slate-400" />
-                    {pr.plant_name}
+                    <Box className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>{pr.plant_name}</span>
                   </td>
-                  <td className="px-6 py-4 text-right font-medium text-slate-900">
+                  <td className="px-6 py-4 text-right font-mono font-bold text-slate-900">
                     {pr.quantity.toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 text-slate-600">
+                  <td className="px-6 py-4 text-slate-600 text-xs">
                     {new Date(pr.required_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border
-                      ${pr.status === 'APPROVED' ? 'bg-blue-50 text-blue-700 border-blue-200' : 
-                        pr.status === 'UNDER_REVIEW' ? 'bg-purple-50 text-purple-700 border-purple-200' : 
-                        pr.status === 'REJECTED' ? 'bg-red-50 text-red-700 border-red-200' : 
-                        'bg-slate-100 text-slate-700 border-slate-200'}`}>
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border
+                      ${pr.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
+                        pr.status === 'PO_CREATED' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
+                        pr.status === 'UNDER_REVIEW' ? 'bg-amber-50 text-amber-700 border-amber-200' : 
+                        pr.status === 'REJECTED' ? 'bg-rose-50 text-rose-700 border-rose-200' : 
+                        'bg-blue-50 text-blue-700 border-blue-200'}`}>
                       <span className={`w-1.5 h-1.5 rounded-full mr-1.5 
-                        ${pr.status === 'APPROVED' ? 'bg-blue-600' : 
-                          pr.status === 'UNDER_REVIEW' ? 'bg-purple-600' : 
-                          pr.status === 'REJECTED' ? 'bg-red-600' : 
-                          'bg-slate-400'}`}></span>
+                        ${pr.status === 'APPROVED' ? 'bg-emerald-500' : 
+                          pr.status === 'PO_CREATED' ? 'bg-indigo-500' :
+                          pr.status === 'UNDER_REVIEW' ? 'bg-amber-500 animate-pulse' : 
+                          pr.status === 'REJECTED' ? 'bg-rose-500' : 
+                          'bg-blue-500'}`}></span>
                       {pr.status.replace('_', ' ')}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <Link href={`/pr/${pr.pr_id}`} className="text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md text-xs font-medium transition-colors opacity-0 group-hover:opacity-100">
-                      View Details
+                    <Link
+                      href={`/pr/${pr.pr_id}`}
+                      className="inline-flex items-center gap-1.5 text-blue-700 bg-blue-50 hover:bg-blue-100 active:bg-blue-200 border border-blue-200/80 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-2xs"
+                    >
+                      <span>AI Trace</span>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-blue-600" />
                     </Link>
                   </td>
                 </tr>

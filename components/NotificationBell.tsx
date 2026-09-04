@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Bell, CheckCircle2, AlertTriangle, XCircle, ExternalLink, Check } from 'lucide-react'
 
 export function NotificationBell() {
+  const router = useRouter()
   const [notifications, setNotifications] = useState<any[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [open, setOpen] = useState(false)
@@ -122,7 +124,13 @@ export function NotificationBell() {
                 return (
                   <div
                     key={n.notification_id}
-                    onClick={() => isUnread && markAsRead(n.notification_id)}
+                    onClick={() => {
+                      if (isUnread) markAsRead(n.notification_id)
+                      if (n.pr_id) {
+                        setOpen(false)
+                        router.push(`/pr/${n.pr_id}`)
+                      }
+                    }}
                     className={`p-3.5 hover:bg-slate-50 transition-colors flex items-start gap-3 cursor-pointer ${
                       isUnread ? 'bg-blue-50/40' : ''
                     }`}
