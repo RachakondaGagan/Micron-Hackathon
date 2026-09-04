@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const supabase = createServerClient()
@@ -68,12 +70,15 @@ export async function GET() {
       }
     }
 
+    const { data: samplePlants } = await supabase.from('plant_master').select('plant_id, plant_name').limit(3)
+
     return NextResponse.json({
       data: {
         status: 'ok',
         database: 'connected',
         supabase_host: process.env.NEXT_PUBLIC_SUPABASE_URL,
         tables_created: true,
+        sample_plants: samplePlants,
         table_counts: counts,
         timestamp: new Date().toISOString(),
       },
