@@ -8,11 +8,7 @@ import {
   Package, 
   Activity, 
   Plus, 
-  Hexagon, 
-  ChevronLeft, 
-  ChevronRight,
-  PanelLeftClose,
-  PanelLeftOpen
+  Hexagon 
 } from 'lucide-react'
 
 type SidebarProps = {
@@ -50,16 +46,6 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
             </div>
           )}
         </Link>
-        {onToggle && !collapsed && (
-          <button
-            type="button"
-            onClick={onToggle}
-            title="Collapse sidebar"
-            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-md transition-colors"
-          >
-            <PanelLeftClose className="w-4 h-4" />
-          </button>
-        )}
       </div>
 
       {/* Navigation Links */}
@@ -101,19 +87,7 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         })}
       </nav>
 
-      {/* Collapsed Toggle Button at Bottom */}
-      {collapsed && onToggle && (
-        <div className="p-2 flex justify-center border-t border-slate-800">
-          <button
-            type="button"
-            onClick={onToggle}
-            title="Expand sidebar"
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
-          >
-            <PanelLeftOpen className="w-5 h-5 text-blue-400" />
-          </button>
-        </div>
-      )}
+
 
       {/* Bottom Status Box */}
       {!collapsed && (
