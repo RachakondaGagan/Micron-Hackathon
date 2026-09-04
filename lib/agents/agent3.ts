@@ -144,9 +144,9 @@ export async function runAgent3(
         finalDecisionResult = validation.data
 
         // 4. CRITICAL SAFETY INVARIANT:
-        // LLM can NEVER downgrade a deterministic REJECT to an APPROVE
-        if (preliminary.decision === 'REJECT' && finalDecisionResult.decision === 'APPROVE') {
-          console.warn('Safety violation: LLM attempted to downgrade REJECT to APPROVE. Overriding to REJECT.')
+        // LLM can NEVER downgrade a deterministic REJECT to REVIEW or APPROVE
+        if (preliminary.decision === 'REJECT' && finalDecisionResult.decision !== 'REJECT') {
+          console.warn('Safety violation: LLM attempted to downgrade REJECT to ' + finalDecisionResult.decision + '. Overriding to REJECT.')
           finalDecisionResult.decision = 'REJECT'
           finalDecisionResult.risk_level = 'HIGH'
           finalDecisionResult.reason = fallbackReason

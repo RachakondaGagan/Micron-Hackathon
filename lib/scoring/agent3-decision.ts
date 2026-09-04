@@ -28,11 +28,20 @@ export function computePreliminaryDecision(
   const normStatus = (matchedPRStatus || '').toUpperCase().trim()
 
   // 1. REJECT CONDITIONS
-  const completedStatuses = ['APPROVED', 'PO_CREATED', 'COMPLETED']
+  // High similarity duplicate (>= 85%, including 100% exact clones) is ALWAYS rejected
+  if (
+    duplicateResult.duplicate_detected &&
+    duplicateResult.overall_similarity_score >= 85
+  ) {
+    return { decision: 'REJECT', risk_level: 'HIGH' }
+  }
+
+  // Duplicate (>= 75%) matching a completed, approved, or rejected PR is rejected
+  const blockedStatuses = ['APPROVED', 'PO_CREATED', 'COMPLETED', 'REJECTED']
   if (
     duplicateResult.overall_similarity_score >= 75 &&
     duplicateResult.duplicate_detected &&
-    completedStatuses.includes(normStatus)
+    blockedStatuses.includes(normStatus)
   ) {
     return { decision: 'REJECT', risk_level: 'HIGH' }
   }
@@ -59,7 +68,7 @@ export function computePreliminaryDecision(
     return { decision: 'REVIEW', risk_level: 'MEDIUM' }
   }
 
-  // Duplicate flagged (by LLM or deterministic) at any score — never auto-approve
+  // Duplicate flagged below 85% with pending match — route to human review
   if (duplicateResult.duplicate_detected) {
     return { decision: 'REVIEW', risk_level: 'MEDIUM' }
   }
