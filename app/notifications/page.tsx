@@ -13,8 +13,10 @@ import {
   Clock,
   ArrowRight,
 } from 'lucide-react'
+import { useToast } from '@/components/ui/toast'
 
 export default function NotificationsPage() {
+  const { toast } = useToast()
   const [notifications, setNotifications] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'ALL' | 'UNREAD' | 'APPROVE' | 'REVIEW' | 'REJECT'>('ALL')
@@ -43,6 +45,11 @@ export default function NotificationsPage() {
       setNotifications(prev =>
         prev.map(n => (n.notification_id === id ? { ...n, status: 'READ', read_at: new Date().toISOString() } : n))
       )
+      toast({
+        title: 'Marked as Read',
+        type: 'info',
+        duration: 2500,
+      })
     } catch (err) {
       console.error('Error marking as read:', err)
     }
@@ -52,6 +59,11 @@ export default function NotificationsPage() {
     const unread = notifications.filter(n => n.status !== 'READ' && !n.read_at)
     await Promise.all(unread.map(n => fetch(`/api/notifications/${n.notification_id}`, { method: 'PATCH' })))
     setNotifications(prev => prev.map(n => ({ ...n, status: 'READ', read_at: new Date().toISOString() })))
+    toast({
+      title: 'All Notifications Marked as Read',
+      type: 'success',
+      duration: 3000,
+    })
   }
 
   const filtered = notifications.filter(n => {

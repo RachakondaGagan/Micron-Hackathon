@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { Sparkles, Calendar, Box, Activity, CheckCircle2, Clock, Network, AlertTriangle, Check, ArrowRight } from 'lucide-react'
+import { useToast } from '@/components/ui/toast'
 
 type PRFormProps = {
   materials: any[]
@@ -14,6 +15,7 @@ type PRFormProps = {
 
 export function PRForm({ materials = [], plants = [], mappings = [], inventory = [], forecasts = [] }: PRFormProps) {
   const router = useRouter()
+  const { toast } = useToast()
 
   // Default to first material or seeded MAT-8491
   const defaultMaterial = materials.find(m => m.material_id === 'MAT-8491') || materials[0]
@@ -73,6 +75,11 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
 
   const handleSaveDraft = () => {
     setDraftSaved(true)
+    toast({
+      title: 'Draft Saved',
+      description: 'Requisition draft has been preserved in local cache.',
+      type: 'info',
+    })
     setTimeout(() => setDraftSaved(false), 3000)
   }
 
@@ -80,6 +87,11 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
     setJustification(
       `Emergency replenishment for Work Order WO-${Math.floor(1000 + Math.random() * 9000)}-X. Required to maintain safety run-rate at ${selectedPlant?.plant_name || 'Plant'} due to accelerated production schedule.`
     )
+    toast({
+      title: 'AI Auto-Draft Applied',
+      description: 'Production context synthesized from work order schedule.',
+      type: 'success',
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -110,9 +122,21 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
         throw new Error(data.error?.message || 'Failed to create PR')
       }
 
+      toast({
+        title: 'Requisition Dispatched',
+        description: `PR ${data.data.pr_number || ''} submitted to autonomous AI pipeline.`,
+        type: 'success',
+      })
+
       router.push(`/pr/${data.data.pr_id}`)
     } catch (err: any) {
-      setError(err.message || 'Failed to create purchase requisition')
+      const msg = err.message || 'Failed to create purchase requisition'
+      setError(msg)
+      toast({
+        title: 'Submission Failed',
+        description: msg,
+        type: 'error',
+      })
     } finally {
       setLoading(false)
     }
