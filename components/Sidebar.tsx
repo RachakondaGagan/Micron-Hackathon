@@ -39,9 +39,9 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
           <Hexagon className="w-6 h-6 text-blue-500 fill-blue-500/20 shrink-0" />
           {!collapsed && (
             <div className="flex items-center gap-1.5 whitespace-nowrap">
-              <span>ProcureAI</span>
-              <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-slate-300 border border-slate-700">
-                Enterprise
+              <span>Micron ProcureAI</span>
+              <span className="text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded-full border border-blue-700/50">
+                SCM
               </span>
             </div>
           )}
@@ -94,11 +94,11 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         <div className="p-4 border-t border-slate-800 bg-slate-950/40">
           <div className="flex items-center gap-2 mb-1.5 text-sm text-white">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span className="font-medium text-xs">Autonomous Mode Active</span>
+            <span className="font-medium text-xs">Micron Autonomous Pilot</span>
           </div>
           <div className="text-[11px] text-slate-400 space-y-0.5">
-            <p>Agentic Pilot: <span className="text-slate-200">Enabled</span></p>
-            <p>Auto-Routing: <span className="text-slate-200">&lt; $25,000</span></p>
+            <p>Fab Network: <span className="text-slate-200">5 Global Fabs</span></p>
+            <p>Auto-Approval: <span className="text-slate-200">&lt; $25,000</span></p>
           </div>
         </div>
       )}

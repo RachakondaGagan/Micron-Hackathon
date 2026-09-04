@@ -17,8 +17,8 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
   const router = useRouter()
   const { toast } = useToast()
 
-  // Default to first material or seeded MAT-8491
-  const defaultMaterial = materials.find(m => m.material_id === 'MAT-8491') || materials[0]
+  // Default to first material or seeded MAT-001 (300mm Prime Silicon Wafers)
+  const defaultMaterial = materials.find(m => m.material_id === 'MAT-001') || materials[0]
   const defaultMaterialId = defaultMaterial?.material_id || ''
 
   const [materialId, setMaterialId] = useState(defaultMaterialId)
@@ -36,10 +36,10 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
   const defaultPlantId = validPlants[0]?.plant_id || plants[0]?.plant_id || ''
   const [plantId, setPlantId] = useState(defaultPlantId)
 
-  const [quantity, setQuantity] = useState('1500')
-  const [requiredDate, setRequiredDate] = useState('2025-11-15')
+  const [quantity, setQuantity] = useState('250')
+  const [requiredDate, setRequiredDate] = useState('2026-10-15')
   const [justification, setJustification] = useState(
-    'Q4 Chassis Structural Stamping run batch #419. Fremont Giga line requires immediate replenishment due to planned velocity acceleration under Work Order WO-8921-X.'
+    'Critical wafer substrate replenishment for 1-beta DRAM pilot production acceleration at Fab 4 (Boise R&D). Expedited lot processing required under Work Order WO-4190-DRAM to sustain automated cleanroom track throughput.'
   )
   const [draftSaved, setDraftSaved] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -57,9 +57,9 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
     return forecasts.find(f => f.material_id === materialId && f.plant_id === plantId)
   }, [forecasts, materialId, plantId])
 
-  const stockOnHand = currentInventory ? Number(currentInventory.available_stock) : 850
-  const safetyTarget = currentInventory ? Number(currentInventory.safety_stock) : 1200
-  const forecastDemand = currentForecast ? Number(currentForecast.forecast_quantity) : 4200
+  const stockOnHand = currentInventory ? Number(currentInventory.available_stock) : 500
+  const safetyTarget = currentInventory ? Number(currentInventory.safety_stock) : 100
+  const forecastDemand = currentForecast ? Number(currentForecast.forecast_quantity) : 120
   const reqQtyNum = Number(quantity) || 0
   const deficit = Math.max(0, safetyTarget - (stockOnHand - reqQtyNum))
   const isDeficit = stockOnHand - reqQtyNum < safetyTarget
@@ -85,11 +85,11 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
 
   const handleAutoDraft = () => {
     setJustification(
-      `Emergency replenishment for Work Order WO-${Math.floor(1000 + Math.random() * 9000)}-X. Required to maintain safety run-rate at ${selectedPlant?.plant_name || 'Plant'} due to accelerated production schedule.`
+      `Expedited semiconductor inventory replenishment for cleanroom line at ${selectedPlant?.plant_name || 'Micron Fab'}. Essential buffer required to maintain target wafer run-rate for ${selectedMaterial?.material_name || 'production materials'} under Work Order WO-${Math.floor(1000 + Math.random() * 9000)}-DRAM.`
     )
     toast({
       title: 'AI Auto-Draft Applied',
-      description: 'Production context synthesized from work order schedule.',
+      description: 'Production context synthesized from Micron fab run schedule.',
       type: 'success',
     })
   }

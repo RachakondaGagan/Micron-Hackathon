@@ -62,7 +62,7 @@ export function NavBar({ collapsed = false, onToggleSidebar }: NavBarProps) {
         {/* ERP Sync status */}
         <div className="hidden sm:flex items-center gap-2 bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full border border-blue-100">
           <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></div>
-          ERP Sync: Live
+          Micron ERP (SAP S/4HANA): Live
         </div>
 
         {/* Notifications */}
@@ -75,7 +75,7 @@ export function NavBar({ collapsed = false, onToggleSidebar }: NavBarProps) {
           </div>
           <div className="hidden lg:block text-left text-xs">
             <div className="font-semibold text-slate-800 leading-tight">Gagan Rachakonda</div>
-            <div className="text-slate-500 leading-tight text-[11px]">Senior Buyer & Lead</div>
+            <div className="text-slate-500 leading-tight text-[11px]">SCM Procurement Lead • Fab 4</div>
           </div>
           <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
         </div>
