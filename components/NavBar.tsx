@@ -70,12 +70,12 @@ export function NavBar({ collapsed = false, onToggleSidebar }: NavBarProps) {
 
         {/* User Profile */}
         <div className="flex items-center gap-2 cursor-pointer hover:bg-slate-100 p-1.5 rounded-lg transition-colors">
-          <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-xs shadow-sm">
-            EV
+          <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+            GR
           </div>
           <div className="hidden lg:block text-left text-xs">
-            <div className="font-semibold text-slate-800 leading-tight">Eleanor Vance</div>
-            <div className="text-slate-500 leading-tight text-[11px]">Senior Buyer</div>
+            <div className="font-semibold text-slate-800 leading-tight">Gagan Rachakonda</div>
+            <div className="text-slate-500 leading-tight text-[11px]">Senior Buyer & Lead</div>
           </div>
           <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
         </div>

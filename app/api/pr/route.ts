@@ -50,8 +50,8 @@ export async function POST(request: Request) {
         required_date,
         requestor_name,
         requestor_email,
-        planner_name: planner_name || 'System Planner',
-        planner_email: planner_email || 'planner@procureai.com',
+        planner_name: planner_name || 'Bhargav',
+        planner_email: planner_email || 'buddarajubhargavavarma@gmail.com',
         status: 'CREATED'
       })
       .select('pr_id, pr_number, status')
