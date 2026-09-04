@@ -117,17 +117,22 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 items-start">
+    <div className="flex flex-col xl:flex-row gap-8 items-start w-full">
       {/* Left Column: Main Form */}
-      <div className="flex-1 w-full bg-white border border-slate-200 rounded-xl shadow-sm p-6 sm:p-8">
-        <div className="flex items-center gap-2 mb-6 pb-4 border-b border-slate-100">
-          <div className="bg-blue-100 p-2 rounded text-blue-700">
-            <Box className="w-5 h-5" />
+      <div className="flex-1 w-full bg-white border border-slate-200 rounded-xl shadow-sm p-6 sm:p-8 min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 pb-4 border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <div className="bg-blue-100 p-2 rounded-lg text-blue-700 shrink-0">
+              <Box className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900 leading-tight">Material & Plant Specifications</h2>
+              <p className="text-xs text-slate-500">All parameters verified via Master Data & ERP Catalog</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900">Material & Plant Specifications</h2>
-            <p className="text-xs text-slate-500">All parameters verified via Master Data & ERP Catalog</p>
-          </div>
+          <span className="text-[11px] font-medium text-slate-400 self-start sm:self-auto">
+            * Direct ERP Linked
+          </span>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -359,7 +364,7 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
       </div>
 
       {/* Right Column: Live Stock Check & Execution Sequence Plan */}
-      <div className="w-full lg:w-88 space-y-5">
+      <div className="w-full xl:w-[420px] 2xl:w-[460px] shrink-0 space-y-5">
         {/* Live Stock Check Card */}
         <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">

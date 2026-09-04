@@ -1,62 +1,133 @@
-import Link from 'next/link'
-import { LayoutDashboard, FileText, Package, Activity, Bell, Settings, Plus, Hexagon } from 'lucide-react'
+'use client'
 
-export function Sidebar() {
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { 
+  LayoutDashboard, 
+  FileText, 
+  Package, 
+  Activity, 
+  Plus, 
+  Hexagon, 
+  ChevronLeft, 
+  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen
+} from 'lucide-react'
+
+type SidebarProps = {
+  collapsed?: boolean
+  onToggle?: () => void
+}
+
+export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
+  const pathname = usePathname()
+
+  const navItems = [
+    { href: '/', label: 'Requestor Dashboard', icon: LayoutDashboard },
+    { href: '/pr/new', label: 'Create Requisition', icon: Plus },
+    { href: '#', label: 'PR Pipeline Trace', icon: Activity },
+    { href: '#', label: 'Review Queue', icon: FileText, badge: '5' },
+    { href: '#', label: 'Inventory Health', icon: Package },
+  ]
+
   return (
-    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col h-screen fixed left-0 top-0 border-r border-slate-800">
-      {/* Logo Area */}
-      <div className="h-16 flex items-center px-6 text-white border-b border-slate-800">
-        <div className="flex items-center gap-2 font-semibold text-lg">
-          <Hexagon className="w-6 h-6 text-blue-500 fill-blue-500/20" />
-          <span>ProcureAI</span>
-          <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-slate-300 ml-1">Enterprise</span>
-        </div>
+    <aside 
+      className={`bg-slate-900 text-slate-300 flex flex-col h-screen fixed left-0 top-0 border-r border-slate-800 z-30 transition-all duration-300 ease-in-out ${
+        collapsed ? 'w-16' : 'w-64'
+      }`}
+    >
+      {/* Header / Logo */}
+      <div className="h-16 flex items-center justify-between px-4 text-white border-b border-slate-800">
+        <Link href="/" className="flex items-center gap-2.5 overflow-hidden font-semibold text-lg">
+          <Hexagon className="w-6 h-6 text-blue-500 fill-blue-500/20 shrink-0" />
+          {!collapsed && (
+            <div className="flex items-center gap-1.5 whitespace-nowrap">
+              <span>ProcureAI</span>
+              <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-slate-300 border border-slate-700">
+                Enterprise
+              </span>
+            </div>
+          )}
+        </Link>
+        {onToggle && !collapsed && (
+          <button
+            type="button"
+            onClick={onToggle}
+            title="Collapse sidebar"
+            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-md transition-colors"
+          >
+            <PanelLeftClose className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 py-4 flex flex-col gap-1 px-3">
-        <div className="text-xs font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider">Operational Navigation</div>
-        
-        <Link href="/" className="flex items-center gap-3 px-3 py-2 bg-blue-600 text-white rounded-md">
-          <LayoutDashboard className="w-4 h-4" />
-          <span className="text-sm font-medium">Requestor Dashboard</span>
-        </Link>
-        
-        <Link href="/pr/new" className="flex items-center gap-3 px-3 py-2 hover:bg-slate-800 rounded-md transition-colors">
-          <Plus className="w-4 h-4" />
-          <span className="text-sm font-medium">Create Requisition</span>
-        </Link>
-
-        <Link href="#" className="flex items-center gap-3 px-3 py-2 hover:bg-slate-800 rounded-md transition-colors">
-          <Activity className="w-4 h-4" />
-          <span className="text-sm font-medium">PR Pipeline Trace</span>
-        </Link>
-
-        <Link href="#" className="flex items-center justify-between px-3 py-2 hover:bg-slate-800 rounded-md transition-colors">
-          <div className="flex items-center gap-3">
-            <FileText className="w-4 h-4" />
-            <span className="text-sm font-medium">Review Queue</span>
+      {/* Navigation Links */}
+      <nav className="flex-1 py-4 flex flex-col gap-1 px-2.5 overflow-y-auto">
+        {!collapsed && (
+          <div className="text-[11px] font-semibold text-slate-500 mb-2 px-2.5 uppercase tracking-wider">
+            Operational Navigation
           </div>
-          <span className="bg-blue-500/20 text-blue-400 text-xs py-0.5 px-2 rounded-full">5</span>
-        </Link>
+        )}
+        
+        {navItems.map((item) => {
+          const Icon = item.icon
+          const isActive = pathname === item.href
 
-        <Link href="#" className="flex items-center gap-3 px-3 py-2 hover:bg-slate-800 rounded-md transition-colors">
-          <Package className="w-4 h-4" />
-          <span className="text-sm font-medium">Inventory Health</span>
-        </Link>
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              title={collapsed ? item.label : undefined}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group relative ${
+                isActive 
+                  ? 'bg-blue-600 text-white font-medium shadow-sm' 
+                  : 'hover:bg-slate-800/80 text-slate-300 hover:text-white'
+              } ${collapsed ? 'justify-center px-0' : ''}`}
+            >
+              <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
+              {!collapsed && (
+                <div className="flex items-center justify-between flex-1 min-w-0">
+                  <span className="text-sm truncate">{item.label}</span>
+                  {item.badge && (
+                    <span className="bg-blue-500/20 text-blue-400 text-xs py-0.5 px-2 rounded-full border border-blue-500/30">
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
+              )}
+            </Link>
+          )
+        })}
       </nav>
 
-      {/* Bottom status area */}
-      <div className="p-4 border-t border-slate-800 bg-slate-900/50">
-        <div className="flex items-center gap-2 mb-2 text-sm text-white">
-          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-          <span className="font-medium">Autonomous Mode</span>
+      {/* Collapsed Toggle Button at Bottom */}
+      {collapsed && onToggle && (
+        <div className="p-2 flex justify-center border-t border-slate-800">
+          <button
+            type="button"
+            onClick={onToggle}
+            title="Expand sidebar"
+            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+          >
+            <PanelLeftOpen className="w-5 h-5 text-blue-400" />
+          </button>
         </div>
-        <div className="text-xs text-slate-400 space-y-1">
-          <p>Agentic Pilot: <span className="text-slate-300">Enabled</span></p>
-          <p>Active Auto-Routing under $25k</p>
+      )}
+
+      {/* Bottom Status Box */}
+      {!collapsed && (
+        <div className="p-4 border-t border-slate-800 bg-slate-950/40">
+          <div className="flex items-center gap-2 mb-1.5 text-sm text-white">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span className="font-medium text-xs">Autonomous Mode Active</span>
+          </div>
+          <div className="text-[11px] text-slate-400 space-y-0.5">
+            <p>Agentic Pilot: <span className="text-slate-200">Enabled</span></p>
+            <p>Auto-Routing: <span className="text-slate-200">&lt; $25,000</span></p>
+          </div>
         </div>
-      </div>
+      )}
     </aside>
   )
 }
