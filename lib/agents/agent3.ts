@@ -151,6 +151,13 @@ export async function runAgent3(
           finalDecisionResult.risk_level = 'HIGH'
           finalDecisionResult.reason = fallbackReason
         }
+
+        // Safety: LLM cannot downgrade REVIEW to APPROVE when duplicate was flagged
+        if (preliminary.decision === 'REVIEW' && finalDecisionResult.decision === 'APPROVE' && duplicateResult.duplicate_detected) {
+          console.warn('Safety violation: LLM attempted to APPROVE a duplicate-flagged PR. Overriding to REVIEW.')
+          finalDecisionResult.decision = 'REVIEW'
+          finalDecisionResult.risk_level = 'MEDIUM'
+        }
       } else {
         console.warn('Agent 3 LLM output failed schema validation, using fallback:', validation.error)
       }

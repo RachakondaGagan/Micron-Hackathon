@@ -9,7 +9,9 @@ import {
   Activity, 
   Plus, 
   Hexagon,
-  ListTodo
+  ListTodo,
+  CheckSquare,
+  Bell
 } from 'lucide-react'
 
 type SidebarProps = {
@@ -21,17 +23,18 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   const pathname = usePathname()
 
   const navItems = [
-    { href: '/', label: 'Requestor Dashboard', icon: LayoutDashboard },
+    { href: '/', label: 'Procurement Dashboard', icon: LayoutDashboard },
     { href: '/pr', label: 'My Requisitions', icon: ListTodo },
     { href: '/pr/new', label: 'Create Requisition', icon: Plus },
+    { href: '/reviewer', label: 'Reviewer Log', icon: CheckSquare, badge: 'Queue' },
     { href: '/pipeline', label: 'PR Pipeline Trace', icon: Activity },
-    { href: '/notifications', label: 'Review Queue', icon: FileText, badge: 'Live' },
     { href: '/#inventory-health', label: 'Inventory Health', icon: Package },
+    { href: '/notifications', label: 'Notifications', icon: Bell },
   ]
 
   return (
     <aside 
-      className={`bg-slate-900 text-slate-300 flex flex-col h-screen fixed inset-y-0 left-0 border-r border-slate-800 z-30 transition-all duration-300 ease-in-out ${
+      className={`bg-slate-900 text-slate-300 flex flex-col h-full shrink-0 border-r border-slate-800 transition-all duration-300 ease-in-out select-none ${
         collapsed ? 'w-16' : 'w-64'
       }`}
     >

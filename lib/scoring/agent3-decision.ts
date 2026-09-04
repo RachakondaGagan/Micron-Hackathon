@@ -59,6 +59,11 @@ export function computePreliminaryDecision(
     return { decision: 'REVIEW', risk_level: 'MEDIUM' }
   }
 
+  // Duplicate flagged (by LLM or deterministic) at any score — never auto-approve
+  if (duplicateResult.duplicate_detected) {
+    return { decision: 'REVIEW', risk_level: 'MEDIUM' }
+  }
+
   if (
     inventoryResult.status !== 'SUFFICIENT' &&
     (!sourcingResult || sourcingResult.no_vendors_found)
