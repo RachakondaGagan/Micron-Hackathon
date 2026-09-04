@@ -23,8 +23,8 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
     { href: '/', label: 'Requestor Dashboard', icon: LayoutDashboard },
     { href: '/pr/new', label: 'Create Requisition', icon: Plus },
     { href: '/pr/latest', label: 'PR Pipeline Trace', icon: Activity },
-    { href: '/notifications', label: 'Review Queue & Audit', icon: FileText, badge: 'Live' },
-    { href: '/', label: 'Inventory Health', icon: Package },
+    { href: '/notifications', label: 'Review Queue', icon: FileText, badge: 'Live' },
+    { href: '/#inventory-health', label: 'Inventory Health', icon: Package },
   ]
 
   return (
@@ -34,13 +34,13 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
       }`}
     >
       {/* Header / Logo */}
-      <div className="h-16 flex items-center justify-between px-4 text-white border-b border-slate-800">
-        <Link href="/" className="flex items-center gap-2.5 overflow-hidden font-semibold text-lg">
-          <Hexagon className="w-6 h-6 text-blue-500 fill-blue-500/20 shrink-0" />
+      <div className="h-16 flex items-center justify-between px-3.5 text-white border-b border-slate-800">
+        <Link href="/" className="flex items-center gap-2.5 min-w-0 font-semibold">
+          <Hexagon className="w-5 h-5 text-blue-500 fill-blue-500/20 shrink-0" />
           {!collapsed && (
-            <div className="flex items-center gap-1.5 whitespace-nowrap">
-              <span>Micron ProcureAI</span>
-              <span className="text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded-full border border-blue-700/50">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-sm sm:text-base font-semibold tracking-tight text-white truncate">Micron ProcureAI</span>
+              <span className="text-[10px] font-semibold bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/30 shrink-0">
                 SCM
               </span>
             </div>
@@ -58,25 +58,27 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         
         {navItems.map((item) => {
           const Icon = item.icon
-          const isActive = pathname === item.href
+          const isActive = item.href === '/' 
+            ? pathname === '/' 
+            : pathname === item.href
 
           return (
             <Link
               key={item.label}
               href={item.href}
               title={collapsed ? item.label : undefined}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group relative ${
+              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors group relative ${
                 isActive 
-                  ? 'bg-blue-600 text-white font-medium shadow-sm' 
+                  ? 'bg-blue-600 text-white font-medium shadow-xs' 
                   : 'hover:bg-slate-800/80 text-slate-300 hover:text-white'
               } ${collapsed ? 'justify-center px-0' : ''}`}
             >
               <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
               {!collapsed && (
                 <div className="flex items-center justify-between flex-1 min-w-0">
-                  <span className="text-sm truncate">{item.label}</span>
+                  <span className="text-xs sm:text-sm truncate">{item.label}</span>
                   {item.badge && (
-                    <span className="bg-blue-500/20 text-blue-400 text-xs py-0.5 px-2 rounded-full border border-blue-500/30">
+                    <span className="bg-blue-500/20 text-blue-400 text-[10px] py-0.5 px-1.5 rounded-full border border-blue-500/30 font-medium shrink-0 ml-1.5">
                       {item.badge}
                     </span>
                   )}

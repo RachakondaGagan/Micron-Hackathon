@@ -39,23 +39,21 @@ export default async function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Header Section */}
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900">Requestor Dashboard</h1>
-          </div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">Requestor Dashboard</h1>
           <p className="text-slate-500 text-sm max-w-2xl">
             Monitor semiconductor inventory thresholds across Micron global fabs, inspect automated replenishment pipelines, and orchestrate requisitions.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-md font-medium text-sm hover:bg-slate-50 transition-colors shadow-sm">
-            <Download className="w-4 h-4" />
-            Export Inventory Report
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 flex-wrap sm:flex-nowrap">
+          <button className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-3.5 py-2 rounded-lg font-medium text-sm hover:bg-slate-50 transition-colors shadow-xs whitespace-nowrap shrink-0">
+            <Download className="w-4 h-4 shrink-0" />
+            <span>Export Inventory Report</span>
           </button>
-          <Link href="/pr/new" className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-md font-medium text-sm hover:bg-slate-800 transition-colors shadow-sm">
-            <Plus className="w-4 h-4" />
-            Create Purchase Requisition
+          <Link href="/pr/new" className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-slate-800 transition-colors shadow-xs whitespace-nowrap shrink-0">
+            <Plus className="w-4 h-4 shrink-0" />
+            <span>Create Purchase Requisition</span>
           </Link>
         </div>
       </div>
@@ -84,7 +82,7 @@ export default async function DashboardPage() {
           </div>
         </div>
         
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div className="bg-slate-50 border border-slate-100 p-4 rounded-lg flex gap-3">
             <div className="bg-blue-100 text-blue-600 p-2 rounded-md h-fit">
               <Search className="w-4 h-4" />
@@ -132,7 +130,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Inventory KPI Cards */}
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
         {/* Card 1 */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
           <div className="flex items-start justify-between mb-2">
@@ -326,7 +324,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Micron Semiconductor Inventory Health Table */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div id="inventory-health" className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden scroll-mt-20">
         <div className="p-5 border-b border-slate-200 flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">

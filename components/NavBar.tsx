@@ -36,14 +36,14 @@ export function NavBar({ collapsed = false, onToggleSidebar }: NavBarProps) {
       </div>
 
       {/* Right side controls */}
-      <div className="flex items-center gap-3 sm:gap-4">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         {/* Search */}
         <div className="relative hidden md:flex items-center">
           <Search className="w-4 h-4 absolute left-3 text-slate-400" />
           <input 
             type="text" 
             placeholder="Search materials, PRs, POs..." 
-            className="pl-9 pr-12 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-56 lg:w-64"
+            className="pl-9 pr-10 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-44 lg:w-56 xl:w-64"
           />
           <div className="absolute right-2.5 flex items-center">
              <kbd className="hidden lg:inline-block bg-white border border-slate-200 rounded px-1.5 text-[10px] font-sans text-slate-400 shadow-sm">⌘K</kbd>
@@ -53,31 +53,35 @@ export function NavBar({ collapsed = false, onToggleSidebar }: NavBarProps) {
         {/* Create PR Button */}
         <Link 
           href="/pr/new" 
-          className="bg-slate-900 text-white text-sm font-medium px-3.5 py-1.5 rounded-lg flex items-center gap-2 hover:bg-slate-800 transition-colors shadow-sm"
+          className="bg-slate-900 text-white text-xs sm:text-sm font-medium px-3 py-1.5 sm:py-2 rounded-lg flex items-center gap-1.5 hover:bg-slate-800 transition-colors shadow-sm whitespace-nowrap shrink-0"
         >
-          <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">Create PR</span>
+          <Plus className="w-4 h-4 shrink-0" />
+          <span>Create PR</span>
         </Link>
 
         {/* ERP Sync status */}
-        <div className="hidden sm:flex items-center gap-2 bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full border border-blue-100">
-          <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></div>
-          Micron ERP (SAP S/4HANA): Live
+        <div className="hidden xl:flex items-center gap-2 bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full border border-blue-100 whitespace-nowrap shrink-0">
+          <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse shrink-0"></div>
+          <span>Micron ERP (SAP S/4HANA): Live</span>
+        </div>
+        <div className="hidden sm:flex xl:hidden items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-100 whitespace-nowrap shrink-0">
+          <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse shrink-0"></div>
+          <span>ERP Live</span>
         </div>
 
         {/* Notifications */}
         <NotificationBell />
 
         {/* User Profile */}
-        <div className="flex items-center gap-2 cursor-pointer hover:bg-slate-100 p-1.5 rounded-lg transition-colors">
-          <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+        <div className="flex items-center gap-2 cursor-pointer hover:bg-slate-100 p-1.5 rounded-lg transition-colors shrink-0">
+          <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-sm shrink-0">
             GR
           </div>
           <div className="hidden lg:block text-left text-xs">
             <div className="font-semibold text-slate-800 leading-tight">Gagan Rachakonda</div>
-            <div className="text-slate-500 leading-tight text-[11px]">SCM Procurement Lead • Fab 4</div>
+            <div className="text-slate-500 leading-tight text-[11px] truncate max-w-[150px]">SCM Procurement Lead • Fab 4</div>
           </div>
-          <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
+          <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block shrink-0" />
         </div>
       </div>
     </header>

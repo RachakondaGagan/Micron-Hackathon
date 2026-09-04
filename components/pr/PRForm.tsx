@@ -381,10 +381,10 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white font-medium text-sm rounded-lg shadow-sm transition-colors flex items-center gap-2 disabled:opacity-60 cursor-pointer"
+              className="px-6 py-2.5 bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white font-medium text-sm rounded-lg shadow-sm transition-colors flex items-center gap-2 disabled:opacity-60 cursor-pointer whitespace-nowrap shrink-0"
             >
-              <Sparkles className="w-4 h-4" />
-              {loading ? 'Submitting Requisition...' : 'Submit & Trigger AI Pipeline'}
+              <Sparkles className="w-4 h-4 shrink-0" />
+              <span>{loading ? 'Submitting Requisition...' : 'Submit & Trigger AI Pipeline'}</span>
             </button>
           </div>
         </form>
