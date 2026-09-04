@@ -111,3 +111,57 @@ Respond strictly in JSON format matching this schema:
 }
 
 export const AGENT3_SYSTEM_PROMPT = `You are a procurement decision officer. You receive structured analysis data. Apply the documented business rules and produce the final decision. The preliminary decision signal is provided — you should confirm it or escalate it (never downgrade a REJECT to APPROVE). Explain the decision clearly for the requestor. Respond ONLY with valid JSON.`
+
+export function buildAgent3UserPrompt(data: {
+  pr: {
+    pr_id: string
+    pr_number: string
+    material_id: string
+    plant_id: string
+    quantity: number
+    required_date: string
+    requestor_name: string
+  }
+  preliminary_decision: {
+    decision: 'APPROVE' | 'REVIEW' | 'REJECT'
+    risk_level: 'LOW' | 'MEDIUM' | 'HIGH'
+  }
+  duplicate_analysis: {
+    duplicate_detected: boolean
+    overall_similarity_score: number
+    confidence: string
+    matched_pr_number: string | null
+    matched_pr_status?: string
+  }
+  inventory_analysis: {
+    status: 'SUFFICIENT' | 'AT_RISK' | 'INSUFFICIENT'
+    usable_stock: number
+    remaining_after_pr: number
+    safety_stock: number
+  }
+  sourcing_analysis: {
+    recommended_vendor_name?: string
+    recommended_vendor_id?: string
+    estimated_savings?: number | null
+    no_vendors_found?: boolean
+  } | null
+}): string {
+  return `Review this procurement requisition analysis and finalize the decision.
+
+INPUT ANALYSIS:
+${JSON.stringify(data, null, 2)}
+
+BUSINESS RULES SUMMARY:
+- REJECT: Duplicate of an already APPROVED/COMPLETED PR (similarity >= 75%), or invalid quantity.
+- REVIEW: Potential duplicate of a pending PR (similarity >= 75%), or inventory deficit with high similarity, or no vendors available.
+- APPROVE: Inventory sufficient, or inventory deficit with a recommended qualified vendor available.
+
+Respond strictly in JSON format matching this schema:
+{
+  "decision": "APPROVE" | "REVIEW" | "REJECT",
+  "reason": string, // Clear explanation of the decision for the requestor
+  "risk_level": "LOW" | "MEDIUM" | "HIGH",
+  "key_evidence": string[], // 2-4 bullet points summarizing the decisive factors
+  "recommended_next_step": string // 1 sentence describing next action (e.g. Issue PO, routing to human reviewer, etc.)
+}`
+}

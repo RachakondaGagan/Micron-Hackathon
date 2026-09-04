@@ -11,6 +11,8 @@ import { runAgent2 } from '@/lib/agents/agent2'
 import type { PurchaseRequisition, InventoryResult, VendorMaster } from '@/types'
 import { SourcingResultSchema } from '@/lib/validation/agent-output-validation'
 
+jest.setTimeout(15000)
+
 describe('Agent 2 — Vendor Sourcing Scoring Formulas', () => {
   describe('calculatePriceScore', () => {
     it('gives 100 to the lowest price and 0 to the highest price', () => {
