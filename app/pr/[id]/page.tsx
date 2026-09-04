@@ -91,8 +91,8 @@ export default function PRDetailPage() {
       const result = await fetchPRDetail(true)
       if (!isMounted) return
 
-      // If PR exists but has no analysis, automatically trigger the pipeline once!
-      if (result && result.pr && !result.analysis && !autoTriggeredRef.current) {
+      // Only trigger if PR exists, has no analysis, is still CREATED (not already UNDER_REVIEW / processing), and hasn't been triggered yet
+      if (result && result.pr && !result.analysis && result.pr.status === 'CREATED' && !autoTriggeredRef.current) {
         autoTriggeredRef.current = true
         triggerPipeline()
       }

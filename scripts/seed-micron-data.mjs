@@ -239,6 +239,40 @@ async function seed() {
       location: 'Aurora, Illinois, USA',
       is_active: true
     },
+    // MAT-005 Cleanroom ESD Suits
+    {
+      vendor_id: 'VND-012',
+      vendor_name: 'DuPont Cleanroom Solutions',
+      material_id: 'MAT-005',
+      unit_price: 45.00,
+      lead_time_days: 5,
+      quality_rating: 4.9,
+      on_time_delivery: 98.0,
+      location: 'Wilmington, Delaware, USA',
+      is_active: true
+    },
+    {
+      vendor_id: 'VND-013',
+      vendor_name: 'Kimberly-Clark Professional',
+      material_id: 'MAT-005',
+      unit_price: 48.50,
+      lead_time_days: 4,
+      quality_rating: 4.8,
+      on_time_delivery: 97.0,
+      location: 'Roswell, Georgia, USA',
+      is_active: true
+    },
+    {
+      vendor_id: 'VND-014',
+      vendor_name: 'Ansell Microflex Protective',
+      material_id: 'MAT-005',
+      unit_price: 42.00,
+      lead_time_days: 7,
+      quality_rating: 4.7,
+      on_time_delivery: 95.0,
+      location: 'Iselin, New Jersey, USA',
+      is_active: true
+    },
     // MAT-006 Bonding Wire
     {
       vendor_id: 'VND-010',

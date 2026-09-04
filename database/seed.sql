@@ -289,6 +289,52 @@ VALUES (
     TRUE
   );
 
+-- Suppliers for MAT-005 (Class 1 Cleanroom ESD Protective Suits)
+INSERT INTO vendor_master (
+    vendor_id,
+    vendor_name,
+    material_id,
+    unit_price,
+    lead_time_days,
+    quality_rating,
+    on_time_delivery,
+    location,
+    is_active
+  )
+VALUES (
+    'VND-012',
+    'DuPont Cleanroom Solutions',
+    'MAT-005',
+    45.00,
+    5,
+    4.9,
+    98.0,
+    'Wilmington, Delaware, USA',
+    TRUE
+  ),
+  (
+    'VND-013',
+    'Kimberly-Clark Professional',
+    'MAT-005',
+    48.50,
+    4,
+    4.8,
+    97.0,
+    'Roswell, Georgia, USA',
+    TRUE
+  ),
+  (
+    'VND-014',
+    'Ansell Microflex Protective',
+    'MAT-005',
+    42.00,
+    7,
+    4.7,
+    95.0,
+    'Iselin, New Jersey, USA',
+    TRUE
+  );
+
 -- Suppliers for MAT-006 (Bonding Wire for Packaging)
 INSERT INTO vendor_master (
     vendor_id,

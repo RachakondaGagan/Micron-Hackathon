@@ -27,13 +27,22 @@ export async function GET(request: Request) {
       )
     }
 
-    const unreadCount = (notifications || []).filter(
+    // Deduplicate notifications by pr_id + notification_type to prevent any legacy duplicates
+    const seen = new Set<string>()
+    const dedupedNotifications = (notifications || []).filter((n: any) => {
+      const key = `${n.pr_id}_${n.notification_type}`
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+
+    const unreadCount = dedupedNotifications.filter(
       (n: any) => n.status !== 'READ' && !n.read_at
     ).length
 
     return NextResponse.json({
       data: {
-        notifications: notifications || [],
+        notifications: dedupedNotifications,
         unread_count: unreadCount,
       },
       error: null,

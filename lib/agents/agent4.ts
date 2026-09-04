@@ -46,7 +46,36 @@ export async function runAgent4(
     message = `Your PR ${pr.pr_number} has been rejected. ${decisionResult.reason}`
   }
 
-  // 2. Insert In-App Notification Record into Supabase
+  // 2. Prevent duplicate notifications for the same PR event within 60 seconds
+  const sixtySecondsAgo = new Date(Date.now() - 60 * 1000).toISOString()
+  try {
+    const table = supabase.from('notifications')
+    if (typeof table?.select === 'function') {
+      const { data: existingNotifs } = await table
+        .select('notification_id')
+        .eq('pr_id', pr.pr_id)
+        .eq('notification_type', notification_type)
+        .gte('sent_at', sixtySecondsAgo)
+        .limit(1)
+
+      if (existingNotifs && existingNotifs.length > 0) {
+        console.log(`[Agent 4] Duplicate notification suppressed for PR ${pr.pr_number} (${notification_type})`)
+        return {
+          notification_id: existingNotifs[0].notification_id,
+          recipient_email,
+          recipient_type,
+          message,
+          in_app_created: true,
+          email_sent: true,
+          email_error: null,
+        }
+      }
+    }
+  } catch (checkErr) {
+    console.warn('[Agent 4] Notification deduplication check warning:', checkErr)
+  }
+
+  // 3. Insert In-App Notification Record into Supabase
   let notification_id = `notif-${Date.now()}`
   let in_app_created = false
 

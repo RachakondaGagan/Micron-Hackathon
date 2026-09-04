@@ -17,34 +17,49 @@ export interface PipelineRunResult {
   created_po?: any
 }
 
-export async function runPRPipeline(prId: string): Promise<PipelineRunResult> {
-  const supabase = createServerClient()
+declare global {
+  // eslint-disable-next-line no-var
+  var __procureai_active_runs: Map<string, Promise<PipelineRunResult>> | undefined
+}
 
-  // 1. Fetch PR details
-  const { data: pr, error: prError } = await supabase
-    .from('purchase_requisitions')
-    .select('*')
-    .eq('pr_id', prId)
-    .single()
+const activeRuns: Map<string, Promise<PipelineRunResult>> =
+  globalThis.__procureai_active_runs || (globalThis.__procureai_active_runs = new Map())
 
-  if (prError || !pr) {
-    throw new Error(`PR ${prId} not found: ${prError?.message}`)
+export async function runPRPipeline(prId: string, forceRerun = false): Promise<PipelineRunResult> {
+  // Prevent duplicate concurrent executions for the same PR
+  if (activeRuns.has(prId)) {
+    console.log(`[Orchestrator] Pipeline run already in progress for PR ${prId}, attaching to active run...`)
+    return await activeRuns.get(prId)!
   }
 
-  // 2. Fetch Plant location
-  const { data: plant } = await supabase
-    .from('plant_master')
-    .select('location')
-    .eq('plant_id', pr.plant_id)
-    .single()
+  const executionPromise = (async () => {
+    const supabase = createServerClient()
 
-  const plantLocation = plant?.location || ''
+    // 1. Fetch PR details
+    const { data: pr, error: prError } = await supabase
+      .from('purchase_requisitions')
+      .select('*')
+      .eq('pr_id', prId)
+      .single()
 
-  // 3. Mark PR as UNDER_REVIEW while pipeline is processing
-  await supabase
-    .from('purchase_requisitions')
-    .update({ status: 'UNDER_REVIEW', updated_at: new Date().toISOString() })
-    .eq('pr_id', prId)
+    if (prError || !pr) {
+      throw new Error(`PR ${prId} not found: ${prError?.message}`)
+    }
+
+    // 2. Fetch Plant location
+    const { data: plant } = await supabase
+      .from('plant_master')
+      .select('location')
+      .eq('plant_id', pr.plant_id)
+      .single()
+
+    const plantLocation = plant?.location || ''
+
+    // 3. Mark PR as UNDER_REVIEW while pipeline is processing
+    await supabase
+      .from('purchase_requisitions')
+      .update({ status: 'UNDER_REVIEW', updated_at: new Date().toISOString() })
+      .eq('pr_id', prId)
 
   try {
     // 4. Fetch historical PRs (last 7 days) for Agent 1 duplicate check
@@ -206,5 +221,13 @@ export async function runPRPipeline(prId: string): Promise<PipelineRunResult> {
     }
 
     throw error
+  }
+  })()
+
+  activeRuns.set(prId, executionPromise)
+  try {
+    return await executionPromise
+  } finally {
+    activeRuns.delete(prId)
   }
 }

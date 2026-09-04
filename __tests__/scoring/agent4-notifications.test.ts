@@ -21,6 +21,15 @@ describe('Agent 4 — Notifications (Module 9)', () => {
   // Mock Supabase client to test without hitting network
   const createMockSupabase = () => ({
     from: jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            gte: jest.fn().mockReturnValue({
+              limit: jest.fn().mockResolvedValue({ data: [], error: null }),
+            }),
+          }),
+        }),
+      }),
       insert: jest.fn().mockReturnValue({
         select: jest.fn().mockReturnValue({
           single: jest.fn().mockResolvedValue({
