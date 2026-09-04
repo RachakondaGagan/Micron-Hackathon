@@ -57,9 +57,9 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
     return forecasts.find(f => f.material_id === materialId && f.plant_id === plantId)
   }, [forecasts, materialId, plantId])
 
-  const stockOnHand = currentInventory ? Number(currentInventory.available_stock) : 500
-  const safetyTarget = currentInventory ? Number(currentInventory.safety_stock) : 100
-  const forecastDemand = currentForecast ? Number(currentForecast.forecast_quantity) : 120
+  const stockOnHand = currentInventory ? Number(currentInventory.available_stock) : 0
+  const safetyTarget = currentInventory ? Number(currentInventory.safety_stock) : 0
+  const forecastDemand = currentForecast ? Number(currentForecast.forecast_quantity) : 0
   const reqQtyNum = Number(quantity) || 0
   const deficit = Math.max(0, safetyTarget - (stockOnHand - reqQtyNum))
   const isDeficit = stockOnHand - reqQtyNum < safetyTarget
@@ -395,14 +395,19 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
         {/* Live Stock Check Card */}
         <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-5 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <div className="bg-blue-50 text-blue-600 p-1.5 rounded-md">
                 <Box className="w-4 h-4" />
               </div>
-              <h3 className="font-semibold text-slate-900 text-sm">Live Stock Check</h3>
+              <div>
+                <h3 className="font-semibold text-slate-900 text-sm">Live Facility Stock Check</h3>
+                <p className="text-[11px] text-slate-500 font-medium">
+                  {selectedPlant ? `${selectedPlant.plant_name} (${selectedPlant.plant_id})` : 'Selected Facility'}
+                </p>
+              </div>
             </div>
-            <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium">
-              Bay 4 Live
+            <span className="text-xs bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-full font-medium">
+              Fab-Specific Live
             </span>
           </div>
 
@@ -412,7 +417,7 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
               <div className="text-xl font-bold text-slate-900 mt-1">
                 {stockOnHand.toLocaleString()} <span className="text-xs font-normal text-slate-500">{selectedMaterial?.unit_of_measure || 'KG'}</span>
               </div>
-              <div className="text-[10px] text-slate-400 mt-1">Physical verified</div>
+              <div className="text-[10px] text-slate-400 mt-1">{selectedPlant?.location || 'Physical verified'}</div>
             </div>
 
             <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">

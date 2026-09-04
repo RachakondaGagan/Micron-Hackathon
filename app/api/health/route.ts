@@ -72,6 +72,7 @@ export async function GET() {
       data: {
         status: 'ok',
         database: 'connected',
+        supabase_host: process.env.NEXT_PUBLIC_SUPABASE_URL,
         tables_created: true,
         table_counts: counts,
         timestamp: new Date().toISOString(),

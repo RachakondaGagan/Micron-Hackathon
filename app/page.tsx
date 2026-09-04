@@ -39,10 +39,6 @@ export default async function DashboardPage() {
         <div>
           <div className="flex items-center gap-3 mb-1">
             <h1 className="text-3xl font-bold tracking-tight text-slate-900">Requestor Dashboard</h1>
-            <span className="bg-blue-100 text-blue-700 text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1.5 border border-blue-200">
-              <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
-              Micron Boise Fab (PLT-01) Synced
-            </span>
           </div>
           <p className="text-slate-500 text-sm max-w-2xl">
             Monitor semiconductor inventory thresholds across Micron global fabs, inspect automated replenishment pipelines, and orchestrate requisitions.
