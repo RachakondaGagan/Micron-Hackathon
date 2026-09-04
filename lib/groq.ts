@@ -13,7 +13,7 @@ export function getGroqClient(): Groq {
   return groqClient
 }
 
-// Default model per ADR-004
-export const GROQ_MODEL = 'llama-3.3-70b-versatile'
+// Active Groq model supported on account
+export const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-120b'
 export const GROQ_TEMPERATURE = 0.1
 export const GROQ_MAX_TOKENS = 1500
