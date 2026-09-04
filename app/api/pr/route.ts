@@ -50,8 +50,8 @@ export async function POST(request: Request) {
         required_date,
         requestor_name,
         requestor_email,
-        planner_name: planner_name || 'Bhargav',
-        planner_email: planner_email || 'buddarajubhargavavarma@gmail.com',
+        planner_name: planner_name || null,
+        planner_email: planner_email || null,
         status: 'CREATED'
       })
       .select('pr_id, pr_number, status')

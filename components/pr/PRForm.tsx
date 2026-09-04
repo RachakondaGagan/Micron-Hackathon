@@ -12,18 +12,8 @@ type PRFormProps = {
   forecasts?: any[]
 }
 
-export const TEAM_MEMBERS = [
-  { name: 'Gagan Rachakonda', email: 'gaganrachakonda.work@gmail.com', role: 'Senior Buyer & Lead' },
-  { name: 'Bhargav', email: 'buddarajubhargavavarma@gmail.com', role: 'Sourcing Planner' },
-  { name: 'Nikitha', email: 'kunisettinikhita@gmail.com', role: 'Inventory Specialist' },
-  { name: 'Ruthvik', email: 'ruthvikparimi2006@gmail.com', role: 'Financial Approver' },
-]
-
 export function PRForm({ materials = [], plants = [], mappings = [], inventory = [], forecasts = [] }: PRFormProps) {
   const router = useRouter()
-
-  const [selectedMemberIndex, setSelectedMemberIndex] = useState(0)
-  const currentMember = TEAM_MEMBERS[selectedMemberIndex]
 
   // Default to first material or seeded MAT-8491
   const defaultMaterial = materials.find(m => m.material_id === 'MAT-8491') || materials[0]
@@ -103,10 +93,10 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
         plant_id: plantId,
         quantity: Number(quantity),
         required_date: requiredDate,
-        requestor_name: currentMember.name,
-        requestor_email: currentMember.email,
-        planner_name: 'Bhargav',
-        planner_email: 'buddarajubhargavavarma@gmail.com',
+        requestor_name: 'Gagan Rachakonda',
+        requestor_email: 'gaganrachakonda.work@gmail.com',
+        planner_name: null,
+        planner_email: null,
       }
 
       const res = await fetch('/api/pr', {
@@ -162,34 +152,6 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
             </div>
           )}
 
-          {/* Requestor Persona */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
-            <div className="flex justify-between items-center mb-2">
-              <label className="text-xs font-semibold text-slate-800 uppercase tracking-wider">
-                Requisition Submitted By (Team Member Persona)
-              </label>
-              <span className="text-[11px] text-blue-600 font-medium">Assigned Planner: Bhargav</span>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {TEAM_MEMBERS.map((m, idx) => (
-                <button
-                  key={m.email}
-                  type="button"
-                  onClick={() => setSelectedMemberIndex(idx)}
-                  className={`p-2 rounded-lg text-left border transition-all cursor-pointer ${
-                    selectedMemberIndex === idx
-                      ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                      : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
-                  }`}
-                >
-                  <div className="text-xs font-bold truncate">{m.name}</div>
-                  <div className={`text-[10px] truncate ${selectedMemberIndex === idx ? 'text-blue-100' : 'text-slate-500'}`}>
-                    {m.role}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
 
           {/* Material Item / SKU */}
           <div>
