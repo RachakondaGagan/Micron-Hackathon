@@ -54,8 +54,9 @@ export async function GET(request: Request) {
       .in('status', ['CREATED', 'SENT', 'CONFIRMED'])
     if (openPOsError) throw openPOsError
 
-    // Map material names and plant names for inventory
+    // Map material names, UOM, and plant names for inventory
     const materialMap = new Map(materials.map(m => [m.material_id, m.material_name]))
+    const uomMap = new Map(materials.map(m => [m.material_id, m.unit_of_measure]))
     const plantMap = new Map(plants.map(p => [p.plant_id, p.plant_name]))
 
     const inventory = inventoryData.map(inv => {
@@ -71,6 +72,7 @@ export async function GET(request: Request) {
       return {
         ...inv,
         material_name: materialMap.get(inv.material_id) || inv.material_id,
+        unit_of_measure: uomMap.get(inv.material_id) || 'units',
         plant_name: plantMap.get(inv.plant_id) || inv.plant_id,
         forecasted_demand,
         usable_stock: Number(inv.available_stock) - forecasted_demand,
