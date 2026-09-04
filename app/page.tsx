@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Download, Plus, CheckCircle2, AlertCircle, Clock, Cpu, Network, CheckSquare, ListTodo, Activity, Box, Search, ArrowUpRight } from 'lucide-react'
 import { headers } from 'next/headers'
 import { InventoryDashboardClient } from '@/components/dashboard/InventoryDashboardClient'
+import { RecentRequisitionsWidget } from '@/components/dashboard/RecentRequisitionsWidget'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -134,89 +135,8 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Recent Requisition Activity Banner */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
-        <div className="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
-          <div>
-            <div className="flex items-center gap-2">
-              <ListTodo className="w-5 h-5 text-blue-600" />
-              <h2 className="text-base font-semibold text-slate-900">My Recent Requisitions (Gagan Rachakonda)</h2>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-              Requisitions submitted by your account queued across Micron fab cleanrooms and autonomous AI evaluation pipelines.
-            </p>
-          </div>
-          <Link
-            href="/pr"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3.5 py-2 rounded-lg transition-colors shadow-2xs whitespace-nowrap shrink-0"
-          >
-            <span>View My Requisitions ({prs.length})</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        <div className="divide-y divide-slate-100">
-          {prs.slice(0, 3).map((pr: any) => (
-            <div key={pr.pr_id} className="p-4 sm:px-6 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/80 transition-colors">
-              <div className="flex items-start sm:items-center gap-3 min-w-0">
-                <div className="mt-0.5 sm:mt-0">
-                  {pr.status === 'APPROVED' && <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />}
-                  {pr.status === 'PO_CREATED' && <CheckCircle2 className="w-4 h-4 text-indigo-500 shrink-0" />}
-                  {pr.status === 'UNDER_REVIEW' && <Clock className="w-4 h-4 text-amber-500 shrink-0" />}
-                  {pr.status === 'REJECTED' && <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />}
-                  {pr.status === 'CREATED' && <ListTodo className="w-4 h-4 text-slate-400 shrink-0" />}
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Link href={`/pipeline?prId=${pr.pr_id}`} className="font-bold text-xs sm:text-sm text-blue-600 hover:text-blue-800 hover:underline">
-                      {pr.pr_number}
-                    </Link>
-                    <span className="text-slate-300">•</span>
-                    <span className="font-medium text-xs sm:text-sm text-slate-900 truncate">{pr.material_name}</span>
-                  </div>
-                  <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
-                    <span>{pr.plant_name}</span>
-                    <span>•</span>
-                    <span>Qty: <strong className="text-slate-700">{pr.quantity.toLocaleString()}</strong></span>
-                    <span>•</span>
-                    <span>Req: {new Date(pr.required_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
-                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold border
-                  ${pr.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
-                    pr.status === 'PO_CREATED' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
-                    pr.status === 'UNDER_REVIEW' ? 'bg-amber-50 text-amber-700 border-amber-200' : 
-                    pr.status === 'REJECTED' ? 'bg-rose-50 text-rose-700 border-rose-200' : 
-                    'bg-blue-50 text-blue-700 border-blue-200'}`}>
-                  <span className={`w-1.5 h-1.5 rounded-full mr-1.5 
-                    ${pr.status === 'APPROVED' ? 'bg-emerald-500' : 
-                      pr.status === 'PO_CREATED' ? 'bg-indigo-500' :
-                      pr.status === 'UNDER_REVIEW' ? 'bg-amber-500' : 
-                      pr.status === 'REJECTED' ? 'bg-rose-500' : 
-                      'bg-blue-500'}`}></span>
-                  {pr.status.replace('_', ' ')}
-                </span>
-                <Link
-                  href={`/pipeline?prId=${pr.pr_id}`}
-                  className="inline-flex items-center gap-1 text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-md text-xs font-semibold transition-all shadow-2xs"
-                >
-                  <span>AI Trace</span>
-                  <ArrowUpRight className="w-3 h-3" />
-                </Link>
-              </div>
-            </div>
-          ))}
-
-          {prs.length === 0 && (
-            <div className="p-8 text-center text-slate-500 text-xs sm:text-sm">
-              No requisitions found. Create your first purchase requisition to trigger the AI pipeline.
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Live Recent Requisition Activity Widget */}
+      <RecentRequisitionsWidget initialPrs={prs} />
 
       {/* Interactive Semiconductor Multi-Material & Fab Inventory Hub */}
       <InventoryDashboardClient

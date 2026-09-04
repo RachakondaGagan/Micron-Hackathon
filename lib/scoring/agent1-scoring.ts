@@ -86,11 +86,18 @@ export function calculateOverallSimilarity(scores: {
 
   const rawScore = Math.round(weightedSum / 23)
 
-  // Critical Domain Invariant:
-  // If material SKU does NOT match (different semiconductor materials),
+  // Critical Domain Invariants:
+  // 1. If material SKU does NOT match (different semiconductor materials),
   // duplicate similarity cannot exceed 25%. Different materials are never duplicates.
   if (scores.material_match === 0) {
     return Math.min(25, rawScore)
+  }
+
+  // 2. If target plant does NOT match (different cleanroom fabs/facilities),
+  // facilities have distinct independent requirements. Different plants are never duplicates.
+  // Duplicate similarity cannot exceed 30%.
+  if (scores.plant_match === 0) {
+    return Math.min(30, rawScore)
   }
 
   return rawScore

@@ -83,7 +83,8 @@ export async function GET(request: Request) {
     // 4. Fetch recent PRs
     let prsQuery = supabase.from('purchase_requisitions').select(`
       pr_id, pr_number, material_id, plant_id, quantity, required_date, status, created_at,
-      ai_pr_analysis(analysis_id)
+      ai_pr_analysis(analysis_id),
+      purchase_orders(po_number, total_amount, vendor_id)
     `).order('created_at', { ascending: false }).limit(10)
 
     if (requestor_email) {
@@ -93,17 +94,22 @@ export async function GET(request: Request) {
     const { data: prsData, error: prsError } = await prsQuery
     if (prsError) throw prsError
 
-    const recent_prs = prsData.map((pr: any) => ({
-      pr_id: pr.pr_id,
-      pr_number: pr.pr_number,
-      material_name: materialMap.get(pr.material_id) || pr.material_id,
-      plant_name: plantMap.get(pr.plant_id) || pr.plant_id,
-      quantity: Number(pr.quantity),
-      required_date: pr.required_date,
-      status: pr.status,
-      created_at: pr.created_at,
-      has_analysis: pr.ai_pr_analysis && pr.ai_pr_analysis.length > 0
-    }))
+    const recent_prs = prsData.map((pr: any) => {
+      const po = Array.isArray(pr.purchase_orders) ? pr.purchase_orders[0] : pr.purchase_orders
+      return {
+        pr_id: pr.pr_id,
+        pr_number: pr.pr_number,
+        material_name: materialMap.get(pr.material_id) || pr.material_id,
+        plant_name: plantMap.get(pr.plant_id) || pr.plant_id,
+        quantity: Number(pr.quantity),
+        required_date: pr.required_date,
+        status: pr.status,
+        created_at: pr.created_at,
+        has_analysis: pr.ai_pr_analysis && pr.ai_pr_analysis.length > 0,
+        po_number: po?.po_number || null,
+        po_total_amount: po?.total_amount || null,
+      }
+    })
 
     // 5. Fetch recent POs
     const { data: posData, error: posError } = await supabase.from('purchase_orders').select(`

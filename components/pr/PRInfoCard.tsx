@@ -40,9 +40,9 @@ export function PRInfoCard({ pr, onRerun, isRerunning }: PRInfoCardProps) {
         )
       case 'PO_CREATED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 border border-indigo-300">
-            <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
-            PO Generated
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+            PO Created
           </span>
         )
       case 'UNDER_REVIEW':

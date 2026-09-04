@@ -37,7 +37,7 @@ export function PRForm({ materials = [], plants = [], mappings = [], inventory =
   const [plantId, setPlantId] = useState(defaultPlantId)
 
   const [quantity, setQuantity] = useState('250')
-  const [requiredDate, setRequiredDate] = useState('2026-10-15')
+  const [requiredDate, setRequiredDate] = useState('2026-09-18')
   const [justification, setJustification] = useState(
     'Critical wafer substrate replenishment for 1-beta DRAM pilot production acceleration at Fab 4 (Boise R&D). Expedited lot processing required under Work Order WO-4190-DRAM to sustain automated cleanroom track throughput.'
   )

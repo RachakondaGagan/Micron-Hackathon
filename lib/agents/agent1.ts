@@ -86,7 +86,7 @@ export async function runAgent1(
   }
 
   const overall = bestScores.overall_similarity
-  const isDuplicate = overall >= 75 && bestScores.material_match === 100
+  const isDuplicate = overall >= 75 && bestScores.material_match === 100 && bestScores.plant_match === 100
   const confidence: 'HIGH' | 'MEDIUM' | 'LOW' =
     isDuplicate ? 'HIGH' : overall >= 50 ? 'MEDIUM' : 'LOW'
 
