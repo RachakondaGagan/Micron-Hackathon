@@ -86,9 +86,9 @@ export async function runAgent1(
   }
 
   const overall = bestScores.overall_similarity
-  const isDuplicate = overall >= 75
+  const isDuplicate = overall >= 75 && bestScores.material_match === 100
   const confidence: 'HIGH' | 'MEDIUM' | 'LOW' =
-    overall >= 75 ? 'HIGH' : overall >= 50 ? 'MEDIUM' : 'LOW'
+    isDuplicate ? 'HIGH' : overall >= 50 ? 'MEDIUM' : 'LOW'
 
   // Construct deterministic fallback evidence & explanation
   const evidenceList: string[] = []
@@ -176,6 +176,7 @@ export async function runAgent1(
       // Return validated output, ensuring deterministic scores are strictly preserved
       return {
         ...validation.data,
+        duplicate_detected: isDuplicate,
         overall_similarity_score: overall,
         material_match_score: bestScores.material_match,
         plant_match_score: bestScores.plant_match,

@@ -27,21 +27,10 @@ export function computePreliminaryDecision(
 ): { decision: DecisionType; risk_level: RiskLevelType } {
   const normStatus = (matchedPRStatus || '').toUpperCase().trim()
 
-  // 1. REJECT CONDITIONS
-  // High similarity duplicate (>= 85%, including 100% exact clones) is ALWAYS rejected
+  // 1. REJECT CONDITIONS: Score above 75 threshold -> STRAIGHT OUT REJECT
   if (
     duplicateResult.duplicate_detected &&
-    duplicateResult.overall_similarity_score >= 85
-  ) {
-    return { decision: 'REJECT', risk_level: 'HIGH' }
-  }
-
-  // Duplicate (>= 75%) matching a completed, approved, or rejected PR is rejected
-  const blockedStatuses = ['APPROVED', 'PO_CREATED', 'COMPLETED', 'REJECTED']
-  if (
-    duplicateResult.overall_similarity_score >= 75 &&
-    duplicateResult.duplicate_detected &&
-    blockedStatuses.includes(normStatus)
+    duplicateResult.overall_similarity_score >= 75
   ) {
     return { decision: 'REJECT', risk_level: 'HIGH' }
   }
@@ -50,29 +39,20 @@ export function computePreliminaryDecision(
     return { decision: 'REJECT', risk_level: 'HIGH' }
   }
 
-  // 2. REVIEW CONDITIONS
-  const pendingStatuses = ['CREATED', 'UNDER_REVIEW', '']
-  if (
-    duplicateResult.overall_similarity_score >= 75 &&
-    duplicateResult.duplicate_detected &&
-    (pendingStatuses.includes(normStatus) || !normStatus)
-  ) {
-    return { decision: 'REVIEW', risk_level: 'MEDIUM' }
-  }
-
+  // 2. REVIEW CONDITIONS: In between thresholds (50% to 74%) -> SEND FOR REVIEW
   if (
     duplicateResult.overall_similarity_score >= 50 &&
-    duplicateResult.overall_similarity_score < 75 &&
-    inventoryResult.status === 'INSUFFICIENT'
+    duplicateResult.overall_similarity_score < 75
   ) {
     return { decision: 'REVIEW', risk_level: 'MEDIUM' }
   }
 
-  // Duplicate flagged below 85% with pending match — route to human review
+  // Any other duplicate flag below 75% -> REVIEW
   if (duplicateResult.duplicate_detected) {
     return { decision: 'REVIEW', risk_level: 'MEDIUM' }
   }
 
+  // Stock not sufficient and no qualified vendors -> REVIEW
   if (
     inventoryResult.status !== 'SUFFICIENT' &&
     (!sourcingResult || sourcingResult.no_vendors_found)
@@ -80,6 +60,6 @@ export function computePreliminaryDecision(
     return { decision: 'REVIEW', risk_level: 'MEDIUM' }
   }
 
-  // 3. APPROVE CONDITIONS (Default)
+  // 3. APPROVE CONDITIONS: Score is less after considering KPIs -> APPROVE
   return { decision: 'APPROVE', risk_level: 'LOW' }
 }

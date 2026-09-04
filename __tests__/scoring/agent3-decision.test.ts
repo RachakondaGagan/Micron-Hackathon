@@ -98,14 +98,14 @@ describe('Agent 3 — Decision Engine (Module 8)', () => {
       expect(computePreliminaryDecision(dup, baseInventorySufficient, null, 'COMPLETED').decision).toBe('REJECT')
     })
 
-    it('REVIEWS when similarity >= 75 and matched PR is still pending (CREATED / UNDER_REVIEW)', () => {
+    it('REJECTS when similarity >= 75 (straight out reject)', () => {
       const dup: DuplicateResult = {
         ...baseDuplicate,
         duplicate_detected: true,
         overall_similarity_score: 78,
       }
-      expect(computePreliminaryDecision(dup, baseInventorySufficient, null, 'CREATED').decision).toBe('REVIEW')
-      expect(computePreliminaryDecision(dup, baseInventorySufficient, null, 'UNDER_REVIEW').decision).toBe('REVIEW')
+      expect(computePreliminaryDecision(dup, baseInventorySufficient, null, 'CREATED').decision).toBe('REJECT')
+      expect(computePreliminaryDecision(dup, baseInventorySufficient, null, 'UNDER_REVIEW').decision).toBe('REJECT')
     })
 
     it('REVIEWS when similarity is 50-74 and inventory is INSUFFICIENT', () => {

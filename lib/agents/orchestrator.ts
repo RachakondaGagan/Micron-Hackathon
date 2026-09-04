@@ -60,6 +60,51 @@ export async function runPRPipeline(prId: string): Promise<PipelineRunResult> {
     // 5. Stage 1: Agent 1 (Duplicate Detection)
     const duplicateResult = await runAgent1(pr, historicalPRs)
 
+    // RULE 1: Score above 75 threshold by Agent 1 -> STRAIGHT OUT REJECT
+    // No need to approve for inventory or generate potential vendors
+    if (duplicateResult.duplicate_detected && duplicateResult.overall_similarity_score >= 75) {
+      const rejectDecision = {
+        decision: 'REJECT' as const,
+        risk_level: 'HIGH' as const,
+        reason: `Requisition rejected immediately at Agent 1. High duplicate similarity (${duplicateResult.overall_similarity_score}%) detected with existing requisition ${duplicateResult.matched_pr_number || ''}. Inventory allocation and vendor sourcing halted to prevent duplicate spend.`,
+        recommended_next_step: `Reference existing active requisition ${duplicateResult.matched_pr_number || ''} for cleanroom fulfillment.`,
+        key_evidence: duplicateResult.evidence || ['High duplicate similarity detected exceeding 75% threshold.'],
+      }
+
+      // Notify stakeholders via in-app and email
+      await runAgent4(pr, rejectDecision)
+
+      const analysisPayload = {
+        pr_id: pr.pr_id,
+        duplicate_result: duplicateResult,
+        inventory_result: null,
+        sourcing_result: null,
+        decision: 'REJECT',
+        decision_reason: rejectDecision.reason,
+        risk_level: 'HIGH',
+        estimated_savings: null,
+        pipeline_error: null,
+        updated_at: new Date().toISOString(),
+      }
+
+      const { data: upsertedAnalysis } = await supabase
+        .from('ai_pr_analysis')
+        .upsert(analysisPayload, { onConflict: 'pr_id' })
+        .select('*')
+        .single()
+
+      await supabase
+        .from('purchase_requisitions')
+        .update({ status: 'REJECTED', updated_at: new Date().toISOString() })
+        .eq('pr_id', prId)
+
+      return {
+        success: true,
+        analysis: upsertedAnalysis || analysisPayload,
+        pr_status: 'REJECTED',
+      }
+    }
+
     // Check matched PR status if duplicate detected
     let matchedPRStatus: string | undefined
     if (duplicateResult.matched_pr_id) {

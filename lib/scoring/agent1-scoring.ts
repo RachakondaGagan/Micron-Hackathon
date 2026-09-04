@@ -84,5 +84,14 @@ export function calculateOverallSimilarity(scores: {
     scores.requestor_match * 2 +
     scores.time_gap_score * 5
 
-  return Math.round(weightedSum / 23)
+  const rawScore = Math.round(weightedSum / 23)
+
+  // Critical Domain Invariant:
+  // If material SKU does NOT match (different semiconductor materials),
+  // duplicate similarity cannot exceed 25%. Different materials are never duplicates.
+  if (scores.material_match === 0) {
+    return Math.min(25, rawScore)
+  }
+
+  return rawScore
 }
