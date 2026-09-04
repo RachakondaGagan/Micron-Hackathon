@@ -1,6 +1,83 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
 import { CreatePRSchema } from '@/lib/validation/pr-validation'
+import { runPRPipeline } from '@/lib/agents/orchestrator'
+
+export async function GET(request: Request) {
+  try {
+    const supabase = createServerClient()
+    const { searchParams } = new URL(request.url)
+    const requestor_email = searchParams.get('requestor_email')
+    const status = searchParams.get('status')
+    const limit = Math.min(Number(searchParams.get('limit')) || 20, 100)
+    const offset = Number(searchParams.get('offset')) || 0
+
+    let query = supabase
+      .from('purchase_requisitions')
+      .select(`
+        pr_id,
+        pr_number,
+        material_id,
+        plant_id,
+        quantity,
+        required_date,
+        status,
+        created_at,
+        material_master (material_name),
+        plant_master (plant_name),
+        ai_pr_analysis (decision, risk_level)
+      `, { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1)
+
+    if (requestor_email) {
+      query = query.eq('requestor_email', requestor_email)
+    }
+    if (status) {
+      query = query.eq('status', status)
+    }
+
+    const { data: prsRaw, count, error } = await query
+
+    if (error) {
+      console.error('Error fetching PR list:', error)
+      return NextResponse.json({ data: null, error: { code: 'DB_ERROR', message: error.message } }, { status: 500 })
+    }
+
+    const prs = (prsRaw || []).map((row: any) => {
+      const materialName = row.material_master?.material_name || row.material_id
+      const plantName = row.plant_master?.plant_name || row.plant_id
+      const analysis = Array.isArray(row.ai_pr_analysis) ? row.ai_pr_analysis[0] : row.ai_pr_analysis
+
+      return {
+        pr_id: row.pr_id,
+        pr_number: row.pr_number,
+        material_name: materialName,
+        plant_name: plantName,
+        quantity: Number(row.quantity),
+        required_date: row.required_date,
+        status: row.status,
+        decision: analysis?.decision || null,
+        risk_level: analysis?.risk_level || null,
+        created_at: row.created_at,
+      }
+    })
+
+    return NextResponse.json({
+      data: {
+        prs,
+        total: count || prs.length,
+      },
+      error: null,
+    }, { status: 200 })
+  } catch (err: any) {
+    console.error('PR List Error:', err)
+    return NextResponse.json({
+      data: null,
+      error: { code: 'INTERNAL_ERROR', message: err.message || 'Internal server error' }
+    }, { status: 500 })
+  }
+}
 
 export async function POST(request: Request) {
   try {
@@ -62,10 +139,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ data: null, error: { code: 'DB_ERROR', message: 'Failed to create PR' } }, { status: 500 })
     }
 
-    // In Module 12 we will trigger the pipeline here via an edge function or background worker
-    // For now, just return the PR
+    // 4. Trigger the AI Pipeline asynchronously in background
+    runPRPipeline(newPR.pr_id).catch((pipeErr) => {
+      console.error(`Background pipeline execution failed for PR ${newPR.pr_id}:`, pipeErr)
+    })
 
-    return NextResponse.json({ data: newPR, error: null }, { status: 201 })
+    return NextResponse.json({
+      data: {
+        pr_id: newPR.pr_id,
+        pr_number: newPR.pr_number,
+        status: newPR.status,
+        pipeline_status: 'PROCESSING',
+        message: 'PR created and analysis pipeline started'
+      },
+      error: null
+    }, { status: 201 })
   } catch (err: any) {
     console.error('PR Creation Error:', err)
     return NextResponse.json({
