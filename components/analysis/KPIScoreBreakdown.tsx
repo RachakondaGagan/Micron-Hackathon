@@ -22,78 +22,102 @@ export function KPIScoreBreakdown({ scores }: KPIScoreBreakdownProps) {
       description: 'Exact material SKU identification',
     },
     {
-      label: 'Facility Match',
+      label: 'Time Gap',
+      weight: 'Weight 5',
+      score: scores.time_gap_score ?? 0,
+      description: 'Recency within 7-day lookback window',
+    },
+    {
+      label: 'Plant Match',
       weight: 'Weight 4',
       score: scores.plant_match_score ?? 0,
       description: 'Target manufacturing plant alignment',
     },
     {
-      label: 'Quantity Similarity',
+      label: 'Required Date Similarity',
       weight: 'Weight 4',
-      score: scores.quantity_similarity_score ?? 0,
-      description: 'Continuous order size proximity',
-    },
-    {
-      label: 'Date Proximity',
-      weight: 'Weight 3',
       score: scores.required_date_similarity_score ?? 0,
       description: 'Target fulfillment delivery date gap',
     },
     {
-      label: 'Requestor Match',
-      weight: 'Weight 4',
-      score: scores.requestor_match_score ?? 0,
-      description: 'Requisition creator email similarity',
+      label: 'Quantity Similarity',
+      weight: 'Weight 3',
+      score: scores.quantity_similarity_score ?? 0,
+      description: 'Continuous order size proximity',
     },
     {
-      label: 'Recency Time Gap',
-      weight: 'Weight 3',
-      score: scores.time_gap_score ?? 0,
-      description: 'Recency within 7-day lookback window',
+      label: 'Requestor Match',
+      weight: 'Weight 2',
+      score: scores.requestor_match_score ?? 0,
+      description: 'Requisition creator email similarity',
     },
   ]
 
   const getScoreColor = (val: number) => {
-    if (val >= 80) return 'bg-rose-500 text-rose-700'
+    if (val >= 75) return 'bg-rose-500 text-rose-700'
     if (val >= 50) return 'bg-amber-500 text-amber-700'
     return 'bg-emerald-500 text-emerald-700'
   }
 
   const getBarColor = (val: number) => {
-    if (val >= 80) return 'bg-rose-500'
+    if (val >= 75) return 'bg-rose-500'
     if (val >= 50) return 'bg-amber-500'
     return 'bg-emerald-500'
   }
 
   return (
     <div className="space-y-3.5">
-      {kpis.map((kpi) => (
-        <div key={kpi.label} className="bg-slate-50/60 rounded-xl p-3 border border-slate-100">
-          <div className="flex items-center justify-between text-xs mb-1.5">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-800">{kpi.label}</span>
-              <span className="text-[10px] font-semibold text-slate-400 px-1.5 py-0.5 rounded bg-white border border-slate-200">
-                {kpi.weight}
+      <div className="space-y-3">
+        {kpis.map((kpi) => (
+          <div key={kpi.label} className="bg-slate-50/60 rounded-xl p-3 border border-slate-100">
+            <div className="flex items-center justify-between text-xs mb-1.5">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-slate-800">{kpi.label}</span>
+                <span className="text-[10px] font-semibold text-slate-500 px-1.5 py-0.5 rounded bg-white border border-slate-200">
+                  {kpi.weight}
+                </span>
+              </div>
+              <span className="font-mono font-bold text-slate-900">
+                {Math.round(kpi.score)}%
               </span>
             </div>
-            <span className="font-mono font-bold text-slate-900">
-              {Math.round(kpi.score)}%
-            </span>
-          </div>
 
-          {/* Progress Track */}
-          <div className="w-full bg-slate-200/80 rounded-full h-2 overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${getBarColor(kpi.score)}`}
-              style={{ width: `${Math.max(3, Math.min(100, kpi.score))}%` }}
-            />
-          </div>
+            {/* Progress Track */}
+            <div className="w-full bg-slate-200/80 rounded-full h-2 overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${getBarColor(kpi.score)}`}
+                style={{ width: `${Math.max(3, Math.min(100, kpi.score))}%` }}
+              />
+            </div>
 
-          <div className="text-[11px] text-slate-400 mt-1">
-            {kpi.description}
+            <div className="text-[11px] text-slate-400 mt-1">
+              {kpi.description}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Confidence Thresholds Guide */}
+      <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-200/80 mt-3">
+        <div className="text-xs font-bold text-slate-700 mb-2">Confidence Thresholds</div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+          <div className="flex items-center gap-1.5 font-medium text-slate-700 bg-white px-2.5 py-1.5 rounded-lg border border-slate-100 shadow-2xs">
+            <span>&ge; 75 &rarr;</span>
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0" />
+            <span className="font-semibold text-rose-700">High similarity</span>
+          </div>
+          <div className="flex items-center gap-1.5 font-medium text-slate-700 bg-white px-2.5 py-1.5 rounded-lg border border-slate-100 shadow-2xs">
+            <span>50&ndash;74 &rarr;</span>
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
+            <span className="font-semibold text-amber-700">Possible Duplicate</span>
+          </div>
+          <div className="flex items-center gap-1.5 font-medium text-slate-700 bg-white px-2.5 py-1.5 rounded-lg border border-slate-100 shadow-2xs">
+            <span>&lt; 50 &rarr;</span>
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
+            <span className="font-semibold text-emerald-700">Low Similarity</span>
           </div>
         </div>
-      ))}
+      </div>
     </div>
   )
 }

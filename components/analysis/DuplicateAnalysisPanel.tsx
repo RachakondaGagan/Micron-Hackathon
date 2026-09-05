@@ -29,7 +29,7 @@ export function DuplicateAnalysisPanel({ result }: DuplicateAnalysisPanelProps) 
   const getScoreBadge = () => {
     if (score >= 75) {
       return {
-        text: 'High Similarity (Flagged)',
+        text: 'High Similarity',
         border: 'border-rose-200',
         bg: 'bg-rose-50',
         textCol: 'text-rose-700',
@@ -38,7 +38,7 @@ export function DuplicateAnalysisPanel({ result }: DuplicateAnalysisPanelProps) 
     }
     if (score >= 50) {
       return {
-        text: 'Moderate Similarity',
+        text: 'Possible Duplicate',
         border: 'border-amber-200',
         bg: 'bg-amber-50',
         textCol: 'text-amber-700',
@@ -46,7 +46,7 @@ export function DuplicateAnalysisPanel({ result }: DuplicateAnalysisPanelProps) 
       }
     }
     return {
-      text: 'Low Similarity (Unique PR)',
+      text: 'Low Similarity',
       border: 'border-emerald-200',
       bg: 'bg-emerald-50',
       textCol: 'text-emerald-700',
